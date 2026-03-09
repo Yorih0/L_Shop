@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "price": 1599,
+    "count": 15,
+    "name": "iPhone 15 Pro Max",
+    "description": "Флагманский iPhone с титановым корпусом, системой камер Pro и чипом A17 Pro. Идеален для профессиональной съемки и требовательных задач.",
+    "shortDesc": "Самый мощный iPhone с титановым корпусом",
+    "category": "iphone",
+    "colors": ["Натуральный титан", "Голубой титан", "Белый титан", "Черный титан"],
+    "storage": "1 ТБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/278/920/9204143753707929.webp"
+  },
+  {
+    "id": 2,
+    "price": 999,
+    "count": 20,
+    "name": "iPhone 15",
+    "description": "Инновационный дизайн с Dynamic Island, мощная камера 48 МП и чип A16 Bionic в легком и прочном корпусе.",
+    "shortDesc": "Инновационный дизайн с Dynamic Island",
+    "category": "iphone",
+    "colors": ["Розовый", "Желтый", "Зеленый", "Синий", "Черный"],
+    "storage": "256 ГБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/285/417/4177552332219075.webp"
+  },
+  {
+    "id": 3,
+    "price": 1299,
+    "count": 8,
+    "name": "iPad Pro 12.9",
+    "description": "Профессиональный планшет с дисплеем Liquid Retina XDR и чипом M2. Поддержка Apple Pencil второго поколения и Magic Keyboard.",
+    "shortDesc": "Профессиональный планшет с чипом M2",
+    "category": "ipad",
+    "colors": ["Серый космос", "Серебристый"],
+    "storage": "512 ГБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/149/659/65905755604307.webp"
+  },
+  {
+    "id": 4,
+    "price": 749,
+    "count": 10,
+    "name": "iPad Air",
+    "description": "Мощный и доступный iPad с чипом M1, поддержкой Apple Pencil и Magic Keyboard. Идеален для работы и учебы.",
+    "shortDesc": "Мощный iPad с чипом M1",
+    "category": "ipad",
+    "colors": ["Серый космос", "Розовый", "Фиолетовый", "Синий", "Лунный свет"],
+    "storage": "256 ГБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/222/893/8930792806611151.webp"
+  },
+  {
+    "id": 5,
+    "price": 3499,
+    "count": 5,
+    "name": "MacBook Pro 16",
+    "description": "Ноутбук для профессионалов с чипом M3 Max, 48 ГБ объединенной памяти и невероятной автономностью до 22 часов.",
+    "shortDesc": "Максимальная производительность для профессионалов",
+    "category": "macbook",
+    "colors": ["Серый космос", "Серебристый"],
+    "storage": "2 ТБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/176/953/953092447572525.webp"
+  },
+  {
+    "id": 6,
+    "price": 1299,
+    "count": 12,
+    "name": "MacBook Air 15",
+    "description": "Невероятно тонкий и легкий ноутбук с большим дисплеем 15 дюймов. Чип M2 обеспечивает высокую производительность для повседневных задач.",
+    "shortDesc": "Тонкий и мощный ноутбук с экраном 15''",
+    "category": "macbook",
+    "colors": ["Полуночный", "Starlight", "Серый космос", "Серебристый"],
+    "storage": "512 ГБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/866/346/3466653364762003.webp"
+  },
+  {
+    "id": 7,
+    "price": 799,
+    "count": 12,
+    "name": "Apple Watch Ultra 2",
+    "description": "Самые совершенные часы Apple для экстремальных условий. Сапфировое стекло, точный двухчастотный GPS и до 36 часов работы.",
+    "shortDesc": "Для экстремальных условий и спорта",
+    "category": "watch",
+    "colors": ["Титан"],
+    "storage": "64 ГБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/389/087/0871142110209472.webp"
+  },
+  {
+    "id": 8,
+    "price": 429,
+    "count": 18,
+    "name": "Apple Watch Series 9",
+    "description": "Новейшие умные часы с чипом S9 и улучшенным отслеживанием здоровья. Яркий дисплей и расширенные функции fitness.",
+    "shortDesc": "Умные часы с расширенным мониторингом здоровья",
+    "category": "watch",
+    "colors": ["Starlight", "Полуночный", "Серебристый", "Красный", "Розовый"],
+    "storage": "32 ГБ",
+    "image": "https://i-store.by/upload/Sh/imageCache/223/502/5029571429231398.webp"
+  },
+  {
+    "id": 9,
+    "price": 549,
+    "count": 7,
+    "name": "AirPods Max",
+    "description": "Полноразмерные наушники с активным шумоподавлением и пространственным аудио. Невероятное качество звука и дизайн премиум-класса.",
+    "shortDesc": "Премиальные наушники с пространственным аудио",
+    "category": "airpods",
+    "colors": ["Серый космос", "Серебристый", "Голубой", "Розовый", "Зеленый"],
+    "image": "https://i-store.by/upload/Sh/imageCache/258/270/2701781338039041.webp"
+  },
+  {
+    "id": 10,
+    "price": 249,
+    "count": 25,
+    "name": "AirPods Pro (2-го поколения)",
+    "description": "Наушники с адаптивным эквалайзером, усиленным шумоподавлением и прозрачностью. Зарядный кейс с динамиком и поддержкой поиска.",
+    "shortDesc": "Лучшее шумоподавление в компактном формате",
+    "category": "airpods",
+    "colors": ["Белый"],
+    "image": "https://i-store.by/upload/Sh/imageCache/385/698/698041245670303.webp"
+  },
+  {
+    "id": 11,
+    "price": 299,
+    "count": 25,
+    "name": "Magic Keyboard для iPad",
+    "description": "Клавиатура с трекпадом для iPad Pro и iPad Air. Плавающая консоль с магнитным креплением и USB-C портом для зарядки.",
+    "shortDesc": "Профессиональная клавиатура с трекпадом",
+    "category": "accessories",
+    "colors": ["Черный", "Белый"],
+    "image": "https://i-store.by/upload/Sh/imageCache/171/909/9092123736485039.webp"
+  },
+  {
+    "id": 12,
+    "price": 129,
+    "count": 30,
+    "name": "Apple Pencil (2-го поколения)",
+    "description": "Магический аксессуар для iPad с сенсорной поверхностью, беспроводной зарядкой и невероятной точностью.",
+    "shortDesc": "Для творчества и заметок",
+    "category": "accessories",
+    "colors": ["Белый"],
+    "image": "https://i-store.by/upload/Sh/imageCache/294/738/73812329487658.webp"
+  }
+]

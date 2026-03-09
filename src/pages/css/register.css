@@ -1,0 +1,14 @@
+/* @import Rubik */
+body{
+    background-color: white;
+    display: flex;
+    justify-content: right;
+}
+header {
+    display: flex;
+    justify-content: center;  /* Центрирует по горизонтали */
+    align-items: center;      /* Центрирует по вертикали */
+    gap: 20px;                /* Расстояние между элементами */
+    padding: 15px;            /* Внутренние отступы */
+    background-color: #f5f5f5; /* Фон для наглядности */
+}
