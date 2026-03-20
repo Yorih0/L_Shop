@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "price": 1599,
+    "count": 15,
+    "name": "iPhone 15 Pro Max",
+    "category": "iphone",
+    "image": "https://i-store.by/upload/Sh/imageCache/278/920/9204143753707929.webp"
+  },
+  {
+    "id": 2,
+    "price": 999,
+    "count": 20,
+    "name": "iPhone 15",
+    "category": "iphone",
+    "image": "https://i-store.by/upload/Sh/imageCache/285/417/4177552332219075.webp"
+  },
+  {
+    "id": 3,
+    "price": 1299,
+    "count": 8,
+    "name": "iPad Pro 12.9",
+    "category": "ipad",
+    "image": "https://i-store.by/upload/Sh/imageCache/149/659/65905755604307.webp"
+  },
+  {
+    "id": 4,
+    "price": 749,
+    "count": 10,
+    "name": "iPad Air",
+    "category": "ipad",
+    "image": "https://i-store.by/upload/Sh/imageCache/222/893/8930792806611151.webp"
+  },
+  {
+    "id": 5,
+    "price": 3499,
+    "count": 5,
+    "name": "MacBook Pro 16",
+    "category": "macbook",
+    "image": "https://i-store.by/upload/Sh/imageCache/176/953/953092447572525.webp"
+  },
+  {
+    "id": 6,
+    "price": 1299,
+    "count": 12,
+    "name": "MacBook Air 15",
+    "category": "macbook",
+    "image": "https://i-store.by/upload/Sh/imageCache/866/346/3466653364762003.webp"
+  },
+  {
+    "id": 7,
+    "price": 799,
+    "count": 12,
+    "name": "Apple Watch Ultra 2",
+    "category": "watch",
+    "image": "https://i-store.by/upload/Sh/imageCache/389/087/0871142110209472.webp"
+  },
+  {
+    "id": 8,
+    "price": 429,
+    "count": 18,
+    "name": "Apple Watch Series 9",
+    "category": "watch",
+    "image": "https://i-store.by/upload/Sh/imageCache/223/502/5029571429231398.webp"
+  },
+  {
+    "id": 9,
+    "price": 549,
+    "count": 7,
+    "name": "AirPods Max",
+    "category": "airpods",
+    "image": "https://i-store.by/upload/Sh/imageCache/258/270/2701781338039041.webp"
+  },
+  {
+    "id": 10,
+    "price": 249,
+    "count": 25,
+    "name": "AirPods Pro (2-го поколения)",
+    "category": "airpods",
+    "image": "https://i-store.by/upload/Sh/imageCache/385/698/698041245670303.webp"
+  },
+  {
+    "id": 11,
+    "price": 299,
+    "count": 25,
+    "name": "Magic Keyboard для iPad",
+    "category": "accessories",
+    "image": "https://i-store.by/upload/Sh/imageCache/171/909/9092123736485039.webp"
+  },
+  {
+    "id": 12,
+    "price": 129,
+    "count": 30,
+    "name": "Apple Pencil (2-го поколения)",
+    "category": "accessories",
+    "image": "https://i-store.by/upload/Sh/imageCache/294/738/73812329487658.webp"
+  }
+]
