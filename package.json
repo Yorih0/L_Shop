@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon server/src/server.ts",
     "start": "node dist/server.js",
     "build": "tsc"
   },
@@ -14,12 +14,18 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "axios": "^1.13.6",
+    "bcrypt": "^6.0.0",
     "cords": "^1.0.4",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "react-hook-form": "^7.71.2",
+    "react-router-dom": "^7.13.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.2.2",
