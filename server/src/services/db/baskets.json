@@ -1,0 +1,23 @@
+[
+  {
+    "user_id": 5,
+    "basket": [
+      {
+        "id": 1,
+        "name": "iPhone 15 Pro Max"
+      },
+      {
+        "id": 6,
+        "name": "MacBook Air 15"
+      },
+      {
+        "id": 7,
+        "name": "Apple Watch Ultra 2"
+      },
+      {
+        "id": 8,
+        "name": "Apple Watch Series 9"
+      }
+    ]
+  }
+]
