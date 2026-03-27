@@ -1,14 +1,17 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import type { ChangeEvent, FormEvent } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./css/register.css";
+
+axios.defaults.withCredentials = true;
 
 export default function LoginForm() {
   const [form, setForm] = useState({
     login: "",
     password: "",
   });
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -19,19 +22,26 @@ export default function LoginForm() {
     });
   };
 
-  const handleSubmit = async(e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(form);
 
     try {
-      const res = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/users/login",
-        form
+        form,
+        {
+          withCredentials: true,
+        }
       );
-      console.log("Успех:", res.data);
-      //получить данные о карзине
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      navigate("/shop")
+
+      const me = await axios.get(
+        "http://localhost:5000/api/users/me",
+        {
+          withCredentials: true,
+        }
+      );
+
+      navigate("/shop");
     } catch (err) {
       const error = err as AxiosError;
       alert("Неверный логин или пароль");
@@ -53,7 +63,6 @@ export default function LoginForm() {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-user"></i>
         </div>
 
         <div className="input-box-lock">
@@ -65,8 +74,10 @@ export default function LoginForm() {
             onChange={handleChange}
             required
           />
-           <i
-            className={`fas ${!showPassword ? "fa-lock" : "fa-unlock-alt"}`}
+          <i
+            className={`fas ${
+              !showPassword ? "fa-lock" : "fa-unlock-alt"
+            }`}
             onClick={() => setShowPassword(!showPassword)}
             style={{ cursor: "pointer" }}
           ></i>

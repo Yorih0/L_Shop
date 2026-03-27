@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { findUserByLogin, createUser, validateUser } from '../services/userService';
 import { RegisterRequest, LoginRequest } from '../types/User';
+import jwt from "jsonwebtoken";
+
 
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -31,14 +33,21 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
         const newUser = await createUser({ login, password, repeatPassword, phone });
 
+        const token = jwt.sign(
+            { id: newUser.id, login: newUser.login },
+            "SECRET_KEY",
+            { expiresIn: "10m" }
+        );
+
+        res.cookie("session", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 10 * 60 * 1000
+        });
+
         res.status(201).json({
-            message: 'Регистрация прошла успешно',
-            user: {
-                id: newUser.id,
-                login: newUser.login,
-                phone: newUser.phone,
-                role: newUser.role
-            }
+            message: 'Регистрация прошла успешно'
         });
     } catch (error) {
         console.error('Register error:', error);
@@ -62,17 +71,46 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        res.json({
-            message: 'Вход выполнен успешно',
-            user: {
-                id: user.id,
-                login: user.login,
-                phone: user.phone,
-                role: user.role
-            }
+        const token = jwt.sign(
+            { id: user.id, login: user.login },
+            "SECRET_KEY",
+            { expiresIn: "10m" }
+        );
+
+        res.cookie("session", token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: "lax",
+            maxAge: 10 * 60 * 1000
         });
+        res.json({ message: "Вход выполнен успешно" });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Ошибка при входе' });
     }
+};
+
+interface TokenPayload {
+  id: number;
+  login: string;
+}
+
+export const getMe = async (req: Request, res: Response): Promise<void> => {
+  const token = req.cookies.session;
+
+  if (!token) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, "SECRET_KEY") as TokenPayload;
+
+    res.json({
+      id: decoded.id,
+      login: decoded.login
+    });
+  } catch {
+    res.status(401).json({ error: "Token expired" });
+  }
 };

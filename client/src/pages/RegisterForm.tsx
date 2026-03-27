@@ -1,8 +1,10 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import type { ChangeEvent, FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./css/register.css";
+
+axios.defaults.withCredentials = true;
 
 export default function RegisterForm() {
   const [form, setForm] = useState({
@@ -11,6 +13,8 @@ export default function RegisterForm() {
     repeatPassword: "",
     phone: "",
   });
+
+  const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword_rep, setShowPassword_rep] = useState(false);
@@ -22,7 +26,7 @@ export default function RegisterForm() {
     });
   };
 
-  const handleSubmit = async(e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (form.password !== form.repeatPassword) {
@@ -30,21 +34,29 @@ export default function RegisterForm() {
       return;
     }
 
-    console.log(form);
-
-     try {
-      const res = await axios.post(
+    try {
+      await axios.post(
         "http://localhost:5000/api/users/register",
-        form
+        form,
+        {
+          withCredentials: true,
+        }
       );
-      localStorage.setItem("products", JSON.stringify(res.data));
-      console.log("Успех:", res.data);
+
+      const me = await axios.get(
+        "http://localhost:5000/api/users/me",
+        {
+          withCredentials: true,
+        }
+      );
+
       alert("Вы зарегистрированы");
-      window.location.href = '/shop';
+
+      navigate("/shop");
     } catch (err) {
       const error = err as AxiosError;
       console.error("Ошибка:", error.response?.data);
-      alert("Ошибка" + error.message);
+      alert("Ошибка: " + error.message);
     }
   };
 
@@ -62,7 +74,6 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-user"></i>
         </div>
 
         <div className="input-box-lock">
@@ -75,7 +86,9 @@ export default function RegisterForm() {
             required
           />
           <i
-            className={`fas ${!showPassword ? "fa-lock" : "fa-unlock-alt"}`}
+            className={`fas ${
+              !showPassword ? "fa-lock" : "fa-unlock-alt"
+            }`}
             onClick={() => setShowPassword(!showPassword)}
             style={{ cursor: "pointer" }}
           ></i>
@@ -91,7 +104,9 @@ export default function RegisterForm() {
             required
           />
           <i
-            className={`fas ${!showPassword_rep ? "fa-lock" : "fa-unlock-alt"}`}
+            className={`fas ${
+              !showPassword_rep ? "fa-lock" : "fa-unlock-alt"
+            }`}
             onClick={() => setShowPassword_rep(!showPassword_rep)}
             style={{ cursor: "pointer" }}
           ></i>
@@ -106,7 +121,6 @@ export default function RegisterForm() {
             onChange={handleChange}
             required
           />
-          <i className="fa-solid fa-phone"></i>
         </div>
 
         <button type="submit" className="btn">
