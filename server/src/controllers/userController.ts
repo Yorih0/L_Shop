@@ -3,9 +3,18 @@ import { findUserByLogin, createUser, validateUser } from '../services/userServi
 import { RegisterRequest, LoginRequest } from '../types/User';
 import jwt from "jsonwebtoken";
 
+interface TokenPayload {
+  id: number;
+  login: string;
+}
 
+/**
+ * Регистрация пользователя
+ * @param {Request} req - тело запроса: login, password, repeatPassword, phone
+ * @param {Response} res - ответ с сообщением
+ */
 export const register = async (req: Request, res: Response): Promise<void> => {
-    try {
+      try {
         const { login, password, repeatPassword, phone }: RegisterRequest = req.body;
 
         if (!login || !password || !repeatPassword || !phone) {
@@ -55,8 +64,13 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+/**
+ * Вход пользователя
+ * @param {Request} req - тело запроса: login, password
+ * @param {Response} res - ответ с сообщением
+ */
 export const login = async (req: Request, res: Response): Promise<void> => {
-    try {
+      try {
         const { login, password }: LoginRequest = req.body;
 
         if (!login || !password) {
@@ -90,11 +104,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-interface TokenPayload {
-  id: number;
-  login: string;
-}
-
+/**
+ * Получить текущего пользователя по токену
+ * @param {Request} req - cookie.session = JWT токен
+ * @param {Response} res - ответ с id и login пользователя
+ */
 export const getMe = async (req: Request, res: Response): Promise<void> => {
   const token = req.cookies.session;
 

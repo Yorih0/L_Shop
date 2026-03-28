@@ -1,7 +1,16 @@
 import { Request, Response } from "express";
 import { BasketService } from "../services/basketService";
 
+/**
+ * Контроллер корзины
+ */
 export const BasketController = {
+
+  /**
+   * Получить корзину пользователя
+   * @param {Request} req - запрос, params.userId = ID пользователя
+   * @param {Response} res - ответ с массивом BasketItem[]
+   */
   getBasket: (req: Request, res: Response) => {
     const userId = Number(req.params.userId);
     try {
@@ -12,9 +21,14 @@ export const BasketController = {
     }
   },
 
+  /**
+   * Обновить корзину пользователя
+   * @param {Request} req - запрос, params.userId = ID пользователя, body = массив BasketItem[]
+   * @param {Response} res - ответ с обновлённой корзиной
+   */
   updateBasket: (req: Request, res: Response) => {
     const userId = Number(req.params.userId);
-    const updatedBasket = req.body; // массив BasketItem[]
+    const updatedBasket = req.body;
     try {
       const basket = BasketService.setBasket(userId, updatedBasket);
       res.json(basket);

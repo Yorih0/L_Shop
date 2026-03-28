@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { ProductService } from "../services/productService";
 
+/**
+ * Получить список товаров с фильтром, поиском и сортировкой
+ * @param {Request} req - запрос, query: search, filter, sort
+ * @param {Response} res - ответ с массивом товаров
+ */
 export const getProducts = (req: Request, res: Response) => {
   try {
     const { search, filter, sort } = req.query;
@@ -18,14 +23,20 @@ export const getProducts = (req: Request, res: Response) => {
   }
 };
 
-export const getProductsId = (req:Request,res:Response) => {
-  try{
-    const {id} = req.query;
+/**
+ * Получить товары по массиву ID
+ * @param {Request} req - запрос, query.id = number[]
+ * @param {Response} res - ответ с массивом товаров
+ */
+export const getProductsId = (req: Request, res: Response) => {
+  try {
+    const { id } = req.query;
 
     const products = ProductService.getProductsId(
       (id as unknown) as number[]
     );
-  }catch(error){
+    res.json(products);
+  } catch (error) {
     console.error("Ошибка в getProductsId:", error);
     res.status(500).json({ error: "Ошибка сервера" });
   }

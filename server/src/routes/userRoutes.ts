@@ -3,8 +3,37 @@ import { register, login ,getMe} from '../controllers/userController';
 
 const router = Router();
 
-router.post('/register', register);
-router.post('/login', login);
-router.get('/me',getMe);
+/**
+ * @swagger
+ * /api/users/register:
+ *   post:
+ *     summary: Регистрация пользователя
+ *     responses:
+ *       200:
+ *         description: Успешная регистрация
+ */
+router.post("/register", register);
+
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Авторизация пользователя
+ *     responses:
+ *       200:
+ *         description: Успешный вход
+ */
+router.post("/login", login);
+
+/**
+ * @swagger
+ * /api/users/me:
+ *   get:
+ *     summary: Получить текущего пользователя
+ *     responses:
+ *       200:
+ *         description: Данные пользователя
+ */
+router.get("/me", getMe);
 
 export default router;
