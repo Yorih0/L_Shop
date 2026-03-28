@@ -15,6 +15,9 @@ app.use(cors({
 
 app.use("/api/users", userRoutes);
 
+import productRoutes from "./routes/productRoutes"
+
+app.use("/api/products",productRoutes)
 app.listen(5000, () => {
   console.log("Server started on http://localhost:5000");
 });
