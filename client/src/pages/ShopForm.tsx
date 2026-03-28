@@ -14,14 +14,19 @@ interface Product {
 
 interface BasketItems {
   id: number;
-  name:string;
+  name: string;
+}
+
+interface User {
+  id: number;
+  login: string;
 }
 
 export default function ShopForm() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<BasketItems[]>([]);
-
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,13 +46,27 @@ export default function ShopForm() {
 
   const { category } = useParams<{ category: string }>();
 
-  const userData = localStorage.getItem("user");
-  const userId = userData ? JSON.parse(userData).id : null;
+  // 🔹 Получение текущего пользователя из cookie
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/users/me", {
+          withCredentials: true // Важно для отправки cookie
+        });
+        setUser(response.data);
+      } catch (error) {
+        console.error("Пользователь не авторизован", error);
+        setUser(null);
+      }
+    };
+    
+    fetchCurrentUser();
+  }, []);
 
   useEffect(() => {
     if (category) {
       setSelectedFilter(category);
-      setFilterValue(category); 
+      setFilterValue(category);
     }
   }, [category]);
 
@@ -65,18 +84,20 @@ export default function ShopForm() {
     };
     fetchProducts();
 
-    if (userId) {
+    // Ждем загрузки пользователя
+    if (user?.id) {
       // загрузка корзины с сервера
-      axios.get(`http://localhost:5000/api/basket/${userId}`)
+      axios.get(`http://localhost:5000/api/basket/${user.id}`, {
+        withCredentials: true
+      })
         .then(res => setCart(res.data))
         .catch(() => setCart([]));
-    } else {
+    } else if (user === null && !loading) {
       // локальная корзина для неавторизованных
       const saved: BasketItems[] = JSON.parse(localStorage.getItem("cart") || "[]");
       setCart(saved);
     }
-  }, [userId]);
-  
+  }, [user]); // Зависимость от user
 
   // 🔹 фильтрация + сортировка
   useEffect(() => {
@@ -89,7 +110,7 @@ export default function ShopForm() {
     }
 
     if (selectedFilter) {
-      if(selectedFilter != "all")
+      if (selectedFilter != "all")
         result = result.filter(p => p.category === selectedFilter);
     }
 
@@ -130,66 +151,67 @@ export default function ShopForm() {
 
   // 🔹 корзина
   const toggleCart = async (id: number, name: string) => {
-      let updated: BasketItems[];
+    let updated: BasketItems[];
 
-      if (cart.some(item => item.id === id)) {
-        updated = cart.filter(item => item.id !== id);
-      } else {
-        updated = [...cart, { id, name }];
-      }
+    if (cart.some(item => item.id === id)) {
+      updated = cart.filter(item => item.id !== id);
+    } else {
+      updated = [...cart, { id, name }];
+    }
 
-      setCart(updated);
+    setCart(updated);
 
-      if (userId) {
-        try {
-          // Make sure we're sending the data in the exact format the server expects
-          const response = await axios.post(
-            `http://localhost:5000/api/basket/${userId}/update`,
-            updated, // This should match BasketItem[] type
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          console.log("Basket updated successfully:", response.data);
-        } catch (err: any) {
-          console.error("Ошибка сохранения корзины на сервере", err);
-          
-          // Log more details about the error
-          if (err.response) {
-            console.error("Server response:", err.response.data);
-            console.error("Server status:", err.response.status);
-            console.error("Server headers:", err.response.headers);
+    if (user?.id) {
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/api/basket/${user.id}/update`,
+          updated,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true // Важно для отправки cookie
           }
-          
-          // Revert the cart state if server save fails
-          // Reload the cart from server to ensure consistency
-          try {
-            const res = await axios.get(`http://localhost:5000/api/basket/${userId}`);
-            setCart(res.data);
-          } catch {
-            // If that fails, reload from localStorage as fallback
-            const saved: BasketItems[] = JSON.parse(localStorage.getItem("cart") || "[]");
-            setCart(saved);
-          }
+        );
+        console.log("Basket updated successfully:", response.data);
+      } catch (err: any) {
+        console.error("Ошибка сохранения корзины на сервере", err);
+
+        // Log more details about the error
+        if (err.response) {
+          console.error("Server response:", err.response.data);
+          console.error("Server status:", err.response.status);
+          console.error("Server headers:", err.response.headers);
         }
-      } else {
-        localStorage.setItem("cart", JSON.stringify(updated));
-      }
-    };
-    const buy = (id: number) => {
-      // Ищем товар в products
-      const product = products.find(p => p.id === id);
 
-      if (!product) {
-        alert("Товар не найден");
-        return;
+        // Revert the cart state if server save fails
+        try {
+          const res = await axios.get(`http://localhost:5000/api/basket/${user.id}`, {
+            withCredentials: true
+          });
+          setCart(res.data);
+        } catch {
+          // If that fails, reload from localStorage as fallback
+          const saved: BasketItems[] = JSON.parse(localStorage.getItem("cart") || "[]");
+          setCart(saved);
+        }
       }
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updated));
+    }
+  };
 
-      // Выводим alert с именем
-      alert(`Вы купили: ${product.name} 🎉`);
-    };
+  const buy = (id: number) => {
+    const product = products.find(p => p.id === id);
+
+    if (!product) {
+      alert("Товар не найден");
+      return;
+    }
+
+    alert(`Вы купили: ${product.name} 🎉`);
+  };
+
   // 🔹 UI обработчики
   const handleSort = (value: string, label: string) => {
     setSelectedSort(value);
@@ -213,7 +235,7 @@ export default function ShopForm() {
         <div className="find-line">
           <i className="fa-solid fa-magnifying-glass"></i>
           <input
-            id = "search_apple_items"
+            id="search_apple_items"
             placeholder="Поиск..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
@@ -334,7 +356,7 @@ export default function ShopForm() {
                 </button>
 
                 <button className="button-s"
-                onClick={() => buy(product.id)}>Купить</button>
+                  onClick={() => buy(product.id)}>Купить</button>
               </div>
             </div>
           ))
