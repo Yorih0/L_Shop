@@ -12,12 +12,14 @@ app.use(cors({
     origin: true,
     credentials: true
 }));
-
 app.use("/api/users", userRoutes);
 
 import productRoutes from "./routes/productRoutes"
-
 app.use("/api/products",productRoutes)
+
+import basketRoutes from "./routes/basketRoutes"
+app.use("/api/basket", basketRoutes);
+
 app.listen(5000, () => {
   console.log("Server started on http://localhost:5000");
 });
