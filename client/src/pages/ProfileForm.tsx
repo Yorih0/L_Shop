@@ -13,10 +13,11 @@ interface Product {
 
 interface BasketItems {
   id: number;
-  name:string;
+  name: string;
 }
 
 interface User {
+  id: number;
   login: string;
   phone?: string;
   role: string;
@@ -25,23 +26,24 @@ interface User {
 export default function ProfileForm() {
   const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
-  const [BasketItems, setBasketItems] = useState<BasketItems[]>([]);
+  const [basketItems, setBasketItems] = useState<BasketItems[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const userData = localStorage.getItem("user");
-  const userId = userData ? JSON.parse(userData).id : null;
 
   useEffect(() => {
     const initializeData = async () => {
-      const savedUser = JSON.parse(localStorage.getItem("user") || "null");
-      if (!savedUser) {
-        window.location.href = "/login";  
-        return;
+      try {
+        const userResponse = await axios.get("http://localhost:5000/api/users/me", {
+          withCredentials: true
+        });
+        
+        setUser(userResponse.data);
+        await loadProducts();
+        await loadCartData(userResponse.data.id);
+        setLoading(false);
+      } catch (error) {
+        console.error("Пользователь не авторизован", error);
+        window.location.href = "/login";
       }
-      setUser(savedUser);
-      await loadProducts();
-      loadCartData();
-      setLoading(false);
     };
 
     initializeData();
@@ -57,82 +59,115 @@ export default function ProfileForm() {
     }
   };
 
-  const loadCartData = async () => {
-  if (userId) {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/basket/${userId}`
+  const loadCartData = async (userId: number) => {
+    if (userId) {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/basket/${userId}`,
+          { withCredentials: true }
+        );
+        setBasketItems(res.data);
+      } catch (err) {
+        console.error("Ошибка загрузки корзины", err);
+        setBasketItems([]);
+      }
+    } else {
+      const cart: BasketItems[] = JSON.parse(
+        localStorage.getItem("cart") || "[]"
       );
-      setBasketItems(res.data);
-    } catch (err) {
-      console.error("Ошибка загрузки корзины", err);
-      setBasketItems([]);
+      setBasketItems(cart);
     }
-  } else {
-    const cart: BasketItems[] = JSON.parse(
-      localStorage.getItem("cart") || "[]"
-    );
-    setBasketItems(cart);
-  }
-};
+  };
 
   const removeFromCart = async (productId: number) => {
-  const newItems = BasketItems.filter(item => item.id !== productId);
-  setBasketItems(newItems);
+    const newItems = basketItems.filter(item => item.id !== productId);
+    setBasketItems(newItems);
 
-  if (userId) {
-    try {
-      await axios.post(
-        `http://localhost:5000/api/basket/${userId}/update`,
-        newItems,
-        { headers: { "Content-Type": "application/json" } }
-      );
-    } catch (err) {
-      console.error("Ошибка обновления корзины", err);
+    if (user?.id) {
+      try {
+        await axios.post(
+          `http://localhost:5000/api/basket/${user.id}/update`,
+          newItems,
+          { 
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true 
+          }
+        );
+      } catch (err) {
+        console.error("Ошибка обновления корзины", err);
+        await loadCartData(user.id);
+      }
+    } else {
+      localStorage.setItem("cart", JSON.stringify(newItems));
     }
-  } else {
-    localStorage.setItem("cart", JSON.stringify(newItems));
-  }
-};
+  };
 
   const buyAll = async () => {
-  if (BasketItems.length === 0) {
-    alert("Корзина пуста");
-    return;
-  }
-
-  alert("Заказ оформлен! Спасибо за покупку!");
-
-  setBasketItems([]);
-
-  if (userId) {
-    try {
-      await axios.post(
-        `http://localhost:5000/api/basket/${userId}/update`,
-        [],
-        { headers: { "Content-Type": "application/json" } }
-      );
-    } catch (err) {
-      console.error("Ошибка очистки корзины", err);
+    if (basketItems.length === 0) {
+      alert("Корзина пуста");
+      return;
     }
-  } else {
-    localStorage.removeItem("cart");
-  }
-};
-  const buyOne = (id: number) => {
-    const item = BasketItems.find(x => x.id === id);
+
+    alert("Заказ оформлен! Спасибо за покупку!");
+
+    setBasketItems([]);
+
+    if (user?.id) {
+      try {
+        await axios.post(
+          `http://localhost:5000/api/basket/${user.id}/update`,
+          [],
+          { 
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true 
+          }
+        );
+      } catch (err) {
+        console.error("Ошибка очистки корзины", err);
+      }
+    } else {
+      localStorage.removeItem("cart");
+    }
+  };
+
+  const buyOne = async (id: number) => {
+    const item = basketItems.find(x => x.id === id);
 
     if (!item) return;
 
     alert(`Куплен товар ${item.name}`);
 
-    const updated = BasketItems.filter(x => x.id !== id);
+    const updated = basketItems.filter(x => x.id !== id);
     setBasketItems(updated);
-    localStorage.setItem("cart", JSON.stringify(updated));
+
+    if (user?.id) {
+      try {
+        await axios.post(
+          `http://localhost:5000/api/basket/${user.id}/update`,
+          updated,
+          { 
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true 
+          }
+        );
+      } catch (err) {
+        console.error("Ошибка обновления корзины", err);
+        await loadCartData(user.id);
+      }
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updated));
+    }
   };
 
-  const logout = () => {
-    localStorage.removeItem("user");
+  const logout = async () => {
+    try {
+      await axios.post("http://localhost:5000/api/users/logout", {}, {
+        withCredentials: true
+      });
+    } catch (error) {
+      console.error("Ошибка при выходе", error);
+    }
+    
     localStorage.removeItem("cart");
     window.location.href = "/login";
   };
@@ -149,13 +184,12 @@ export default function ProfileForm() {
     return category ? categories[category] || category : "Без категории";
   };
 
-  const cartTotal = BasketItems.reduce((sum:number, item:BasketItems) => {
+  const cartTotal = basketItems.reduce((sum: number, item: BasketItems) => {
     const product = products.find(p => p.id === item.id);
     return sum + (product?.price || 0);
   }, 0);
 
-  // Общее количество товаров
-  const totalItems = BasketItems.length;;
+  const totalItems = basketItems.length;
 
   if (loading) {
     return <div className="loading">Загрузка...</div>;
@@ -163,7 +197,6 @@ export default function ProfileForm() {
 
   return (
     <div className="profile-container">
-      {/* Информация о пользователе */}
       <div className="profile-card">
         <div className="profile-avatar">
           <i className="fas fa-user-circle"></i>
@@ -176,15 +209,14 @@ export default function ProfileForm() {
             </button>
           </div>
           <div className="prf">
-          <div className="info-item">
-            <i className="fas fa-phone"></i>
-            <span>{user?.phone || "Не указан"}</span>
-          </div>
-          <div className="info-item">
-            <i className="fas fa-tag"></i>
-            <span>{user?.role === "admin" ? "Администратор" : "Покупатель"}</span>
-          </div>
-        
+            <div className="info-item">
+              <i className="fas fa-phone"></i>
+              <span>{user?.phone || "Не указан"}</span>
+            </div>
+            <div className="info-item">
+              <i className="fas fa-tag"></i>
+              <span>{user?.role === "admin" ? "Администратор" : "Покупатель"}</span>
+            </div>
           </div>
           <div className="stats-container">
             <div className="stat-cart">
@@ -195,8 +227,7 @@ export default function ProfileForm() {
               <div className="stat-label">Общая сумма</div>
               <div className="stat-value">{cartTotal.toLocaleString()} $</div>
             </div>
-            {/* Кнопка покупки */}
-            {BasketItems.length > 0 && (
+            {basketItems.length > 0 && (
               <button className="logout-btn" onClick={buyAll}>
                 Купить всё
               </button>
@@ -205,62 +236,59 @@ export default function ProfileForm() {
         </div>
       </div>
 
-      {/* Товары из корзины */}
       <h2 className="section-title">Моя корзина</h2>
 
-<div className="products">
-  {BasketItems.length === 0 ? (
-    <div className="no-products">Корзина пуста</div>
-  ) : (
-    BasketItems.map((item) => {
-      const product = products.find(p => p.id === item.id);
-      if (!product) return null;
+      <div className="products">
+        {basketItems.length === 0 ? (
+          <div className="no-products">Корзина пуста</div>
+        ) : (
+          basketItems.map((item) => {
+            const product = products.find(p => p.id === item.id);
+            if (!product) return null;
 
-      return (
-        <div className="cart" key={product.id}>
-          <img
-            src={product.image}
-            alt={product.name}
-            className="img"
-            onError={(e) =>
-              (e.currentTarget.src = "/img/placeholder.png")
-            }
-          />
+            return (
+              <div className="cart" key={product.id}>
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="img"
+                  onError={(e) =>
+                    (e.currentTarget.src = "/img/placeholder.png")
+                  }
+                />
 
-          <div className="name">{product.name}</div>
+                <div className="name">{product.name}</div>
 
-          <div className="nalichie">
-            Наличие:{" "}
-            <span>
-              {product.count > 0 ? "В наличии" : "Нет"}
-            </span>
-          </div>
+                <div className="nalichie">
+                  Наличие:{" "}
+                  <span>
+                    {product.count > 0 ? "В наличии" : "Нет"}
+                  </span>
+                </div>
 
-          <div className="cost">
-            Цена: <span>{product.price} $</span>
-          </div>
+                <div className="cost">
+                  Цена: <span>{product.price} $</span>
+                </div>
 
-          <div className="buttons">
-            {/* ❌ удалить */}
-            <button
-              className="button-s"
-              onClick={() => removeFromCart(product.id)}
-            >
-              <i className="fa-solid fa-box"></i>
-            </button>
+                <div className="buttons">
+                  <button
+                    className="button-s"
+                    onClick={() => removeFromCart(product.id)}
+                  >
+                    <i className="fa-solid fa-box"></i>
+                  </button>
 
-            {/* 💳 купить */}
-            <button
-              className="button-s"
-              onClick={() => buyOne(product.id)}
-            >
-              Купить
-            </button>
-          </div>
-        </div>
-      );
-    })
-  )}
+                  <button
+                    className="button-s"
+                    onClick={() => buyOne(product.id)}
+                  >
+                    Купить
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
