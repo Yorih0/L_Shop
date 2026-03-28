@@ -1,0 +1,46 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "login": "admin",
+      "password": "123321",
+      "phone": "+375 29 123 4567",
+      "role": "admin"
+    },
+    {
+      "id": 2,
+      "login": "ivan",
+      "password": "123321",
+      "phone": "+375 33 613 5003",
+      "role": "user"
+    },
+    {
+      "id": 3,
+      "login": "user_1",
+      "password": "123321",
+      "phone": "+375 33 613 5003",
+      "role": "user"
+    },
+    {
+      "id": 4,
+      "login": "arsen",
+      "password": "52421488",
+      "phone": "+375 33 613 5052",
+      "role": "user"
+    },
+    {
+      "id": 5,
+      "login": "arse",
+      "password": "42521488",
+      "phone": "+375 33 613 5052",
+      "role": "user"
+    },
+    {
+      "id": 6,
+      "login": "ivan2",
+      "password": "123456",
+      "phone": "+375 33 613 5523",
+      "role": "user"
+    }
+  ]
+}
