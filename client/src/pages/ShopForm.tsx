@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import "./css/shop.css";
 
 interface Product {
@@ -23,6 +24,7 @@ interface User {
 }
 
 export default function ShopForm() {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<BasketItems[]>([]);
@@ -31,35 +33,34 @@ export default function ShopForm() {
   const [error, setError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
-
-  const [sortValue, setSortValue] = useState("Сортировка");
-  const [filterValue, setFilterValue] = useState("Фильтрация");
-
+  const [sortValue, setSortValue] = useState(t("shop.sort"));
+  const [filterValue, setFilterValue] = useState(t("shop.filter"));
   const [selectedSort, setSelectedSort] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
 
   const sortRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
-
   const { category } = useParams<{ category: string }>();
 
-  // 🔹 Получение текущего пользователя из cookie
+  useEffect(() => {
+    setSortValue(t("shop.sort"));
+    setFilterValue(t("shop.filter"));
+  }, [t]);
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/users/me", {
-          withCredentials: true // Важно для отправки cookie
+          withCredentials: true
         });
         setUser(response.data);
       } catch (error) {
-        console.error("Пользователь не авторизован", error);
+        console.error(t("shop.userNotAuth"), error);
         setUser(null);
       }
     };
-    
+
     fetchCurrentUser();
   }, []);
 
@@ -70,36 +71,31 @@ export default function ShopForm() {
     }
   }, [category]);
 
-  // 🔹 загрузка данных
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await axios.get("http://localhost:5000/api/products");
         setProducts(res.data);
       } catch {
-        setError("Ошибка загрузки товаров");
+        setError(t("shop.loadError"));
       } finally {
         setLoading(false);
       }
     };
     fetchProducts();
 
-    // Ждем загрузки пользователя
     if (user?.id) {
-      // загрузка корзины с сервера
       axios.get(`http://localhost:5000/api/basket/${user.id}`, {
         withCredentials: true
       })
         .then(res => setCart(res.data))
         .catch(() => setCart([]));
     } else if (user === null && !loading) {
-      // локальная корзина для неавторизованных
       const saved: BasketItems[] = JSON.parse(localStorage.getItem("cart") || "[]");
       setCart(saved);
     }
-  }, [user]); // Зависимость от user
+  }, [user, t]);
 
-  // 🔹 фильтрация + сортировка
   useEffect(() => {
     let result = [...products];
 
@@ -109,9 +105,8 @@ export default function ShopForm() {
       );
     }
 
-    if (selectedFilter) {
-      if (selectedFilter != "all")
-        result = result.filter(p => p.category === selectedFilter);
+    if (selectedFilter && selectedFilter !== "all") {
+      result = result.filter(p => p.category === selectedFilter);
     }
 
     if (selectedSort) {
@@ -134,7 +129,6 @@ export default function ShopForm() {
     setFilteredProducts(result);
   }, [products, searchTerm, selectedFilter, selectedSort]);
 
-  // 🔹 закрытие dropdown при клике вне
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
@@ -149,7 +143,6 @@ export default function ShopForm() {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // 🔹 корзина
   const toggleCart = async (id: number, name: string) => {
     let updated: BasketItems[];
 
@@ -163,38 +156,20 @@ export default function ShopForm() {
 
     if (user?.id) {
       try {
-        const response = await axios.post(
+        await axios.post(
           `http://localhost:5000/api/basket/${user.id}/update`,
           updated,
           {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true // Важно для отправки cookie
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
           }
         );
-        console.log("Basket updated successfully:", response.data);
       } catch (err: any) {
-        console.error("Ошибка сохранения корзины на сервере", err);
-
-        // Log more details about the error
-        if (err.response) {
-          console.error("Server response:", err.response.data);
-          console.error("Server status:", err.response.status);
-          console.error("Server headers:", err.response.headers);
-        }
-
-        // Revert the cart state if server save fails
-        try {
-          const res = await axios.get(`http://localhost:5000/api/basket/${user.id}`, {
-            withCredentials: true
-          });
-          setCart(res.data);
-        } catch {
-          // If that fails, reload from localStorage as fallback
-          const saved: BasketItems[] = JSON.parse(localStorage.getItem("cart") || "[]");
-          setCart(saved);
-        }
+        console.error(t("shop.basketUpdateError"), err);
+        const res = await axios.get(`http://localhost:5000/api/basket/${user.id}`, {
+          withCredentials: true
+        });
+        setCart(res.data);
       }
     } else {
       localStorage.setItem("cart", JSON.stringify(updated));
@@ -203,16 +178,13 @@ export default function ShopForm() {
 
   const buy = (id: number) => {
     const product = products.find(p => p.id === id);
-
     if (!product) {
-      alert("Товар не найден");
+      alert(t("shop.productNotFound"));
       return;
     }
-
-    alert(`Вы купили: ${product.name} 🎉`);
+    alert(`${t("shop.bought")}: ${product.name} 🎉`);
   };
 
-  // 🔹 UI обработчики
   const handleSort = (value: string, label: string) => {
     setSelectedSort(value);
     setSortValue(label);
@@ -225,25 +197,23 @@ export default function ShopForm() {
     setFilterOpen(false);
   };
 
-  if (loading) return <div className="loading">Загрузка...</div>;
+  if (loading) return <div className="loading">{t("shop.loading")}</div>;
   if (error) return <div className="error">{error}</div>;
 
   return (
     <>
       <div className="controls">
-        {/* 🔍 поиск */}
         <div className="find-line">
           <i className="fa-solid fa-magnifying-glass"></i>
           <input
             id="search_apple_items"
-            placeholder="Поиск..."
+            placeholder={t("shop.search")}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
           />
         </div>
 
         <div className="selectors">
-          {/* 🔽 сортировка */}
           <div className="selection dropdown" ref={sortRef}>
             <div
               className="dropdown-btn"
@@ -254,29 +224,17 @@ export default function ShopForm() {
             >
               {sortValue}
             </div>
-
             {sortOpen && (
               <div className="dropdown-menu">
-                <div onClick={() => handleSort("", "Сортировка")}>
-                  Сортировка
-                </div>
-                <div onClick={() => handleSort("price", "Цена ↑")}>
-                  Цена ↑
-                </div>
-                <div onClick={() => handleSort("price_desc", "Цена ↓")}>
-                  Цена ↓
-                </div>
-                <div onClick={() => handleSort("name", "Название ↑")}>
-                  Название ↑
-                </div>
-                <div onClick={() => handleSort("name_desc", "Название ↓")}>
-                  Название ↓
-                </div>
+                <div onClick={() => handleSort("", t("shop.sort"))}>{t("shop.sort")}</div>
+                <div onClick={() => handleSort("price", t("shop.priceAsc"))}>{t("shop.priceAsc")}</div>
+                <div onClick={() => handleSort("price_desc", t("shop.priceDesc"))}>{t("shop.priceDesc")}</div>
+                <div onClick={() => handleSort("name", t("shop.nameAsc"))}>{t("shop.nameAsc")}</div>
+                <div onClick={() => handleSort("name_desc", t("shop.nameDesc"))}>{t("shop.nameDesc")}</div>
               </div>
             )}
           </div>
 
-          {/* 🔽 фильтр */}
           <div className="selection dropdown" ref={filterRef}>
             <div
               className="dropdown-btn"
@@ -287,37 +245,23 @@ export default function ShopForm() {
             >
               {filterValue}
             </div>
-
             {filterOpen && (
               <div className="dropdown-menu">
-                <div onClick={() => handleFilter("", "Фильтрация")}>
-                  Все
-                </div>
-                <div onClick={() => handleFilter("iphone", "iPhone")}>
-                  iPhone
-                </div>
-                <div onClick={() => handleFilter("mac", "Mac")}>
-                  Mac
-                </div>
-                <div onClick={() => handleFilter("ipad", "iPad")}>
-                  iPad
-                </div>
-                <div onClick={() => handleFilter("watch", "Watch")}>
-                  Watch
-                </div>
-                <div onClick={() => handleFilter("airpods", "AirPods")}>
-                  AirPods
-                </div>
+                <div onClick={() => handleFilter("", t("shop.all"))}>{t("shop.all")}</div>
+                <div onClick={() => handleFilter("iphone", "iPhone")}>iPhone</div>
+                <div onClick={() => handleFilter("macbook", "Macbook")}>Macbook</div>
+                <div onClick={() => handleFilter("ipad", "iPad")}>iPad</div>
+                <div onClick={() => handleFilter("watch", "Watch")}>Watch</div>
+                <div onClick={() => handleFilter("airpods", "AirPods")}>AirPods</div>
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* 🛒 товары */}
       <div className="products">
         {filteredProducts.length === 0 ? (
-          <div className="no-products">Ничего не найдено</div>
+          <div className="no-products">{t("shop.noProducts")}</div>
         ) : (
           filteredProducts.map(product => (
             <div className="cart" key={product.id}>
@@ -325,38 +269,27 @@ export default function ShopForm() {
                 src={product.image}
                 alt={product.name}
                 className="img"
-                onError={e =>
-                  (e.currentTarget.src = "/img/placeholder.png")
-                }
+                onError={e => (e.currentTarget.src = "/img/placeholder.png")}
               />
-
               <div className="name">{product.name}</div>
-
               <div className="nalichie">
-                Наличие:{" "}
-                <span>
-                  {product.count > 0 ? "В наличии" : "Нет"}
-                </span>
+                {t("shop.availability")}:{" "}
+                <span>{product.count > 0 ? t("shop.inStock") : t("shop.outOfStock")}</span>
               </div>
-
               <div className="cost">
-                Цена: <span>{product.price} $</span>
+                {t("shop.price")}: <span>{product.price} $</span>
               </div>
-
               <div className="buttons">
-                <button
-                  className="button-s"
-                  onClick={() => toggleCart(product.id, product.name)}
-                >
+                <button className="button-s" onClick={() => toggleCart(product.id, product.name)}>
                   {cart.some(item => item.id === product.id) ? (
                     <i className="fa-solid fa-box"></i>
                   ) : (
                     <i className="fa-solid fa-box-open"></i>
                   )}
                 </button>
-
-                <button className="button-s"
-                  onClick={() => buy(product.id)}>Купить</button>
+                <button className="button-s" onClick={() => buy(product.id)}>
+                  {t("shop.buy")}
+                </button>
               </div>
             </div>
           ))

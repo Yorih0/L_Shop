@@ -2,17 +2,20 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import type { ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./css/register.css";
 
 axios.defaults.withCredentials = true;
 
 export default function LoginForm() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     login: "",
     password: "",
   });
 
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -29,36 +32,27 @@ export default function LoginForm() {
       await axios.post(
         "http://localhost:5000/api/users/login",
         form,
-        {
-          withCredentials: true,
-        }
-      );
-
-      const me = await axios.get(
-        "http://localhost:5000/api/users/me",
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       navigate("/shop");
     } catch (err) {
       const error = err as AxiosError;
-      alert("Неверный логин или пароль");
+      alert(t("login.error"));
       console.error("Ошибка:", error.response?.data);
     }
   };
 
   return (
     <div className="card">
-      <h1 className="card-title">Уже с нами!</h1>
+      <h1 className="card-title">{t("login.title")}</h1>
 
       <form className="form" onSubmit={handleSubmit}>
         <div className="input-box">
           <input
             type="text"
             name="login"
-            placeholder="Ваш логин"
+            placeholder={t("login.loginPlaceholder")}
             value={form.login}
             onChange={handleChange}
             required
@@ -69,27 +63,25 @@ export default function LoginForm() {
           <input
             type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Ваш пароль"
+            placeholder={t("login.passwordPlaceholder")}
             value={form.password}
             onChange={handleChange}
             required
           />
           <i
-            className={`fas ${
-              !showPassword ? "fa-lock" : "fa-unlock-alt"
-            }`}
+            className={`fas ${!showPassword ? "fa-lock" : "fa-unlock-alt"}`}
             onClick={() => setShowPassword(!showPassword)}
             style={{ cursor: "pointer" }}
           ></i>
         </div>
 
         <button type="submit" className="btn">
-          Вход
+          {t("login.button")}
         </button>
 
         <div className="account">
-          <span>Нет аккаунта?</span>
-          <Link to="/register">Зарегистрироваться</Link>
+          <span>{t("login.noAccount")}</span>
+          <Link to="/register">{t("login.register")}</Link>
         </div>
       </form>
     </div>

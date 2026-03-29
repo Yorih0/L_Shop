@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./css/profile.css";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 interface Product {
   id: number;
@@ -24,6 +25,7 @@ interface User {
 }
 
 export default function ProfileForm() {
+  const { t } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [basketItems, setBasketItems] = useState<BasketItems[]>([]);
@@ -35,27 +37,26 @@ export default function ProfileForm() {
         const userResponse = await axios.get("http://localhost:5000/api/users/me", {
           withCredentials: true
         });
-        
         setUser(userResponse.data);
         await loadProducts();
         await loadCartData(userResponse.data.id);
         setLoading(false);
       } catch (error) {
-        console.error("Пользователь не авторизован", error);
+        console.error(t("profile.notAuthorized"), error);
         window.location.href = "/login";
       }
     };
 
     initializeData();
-  }, []);
+  }, [t]);
 
   const loadProducts = async () => {
     try {
       const response = await axios.get<Product[]>("http://localhost:5000/api/products");
       setProducts(response.data);
     } catch (error) {
-      console.error("Ошибка загрузки товаров:", error);
-      alert("Ошибка загрузки товаров");
+      console.error(t("profile.loadError"), error);
+      alert(t("profile.loadError"));
     }
   };
 
@@ -68,7 +69,7 @@ export default function ProfileForm() {
         );
         setBasketItems(res.data);
       } catch (err) {
-        console.error("Ошибка загрузки корзины", err);
+        console.error(t("profile.cartLoadError"), err);
         setBasketItems([]);
       }
     } else {
@@ -88,13 +89,13 @@ export default function ProfileForm() {
         await axios.post(
           `http://localhost:5000/api/basket/${user.id}/update`,
           newItems,
-          { 
+          {
             headers: { "Content-Type": "application/json" },
-            withCredentials: true 
+            withCredentials: true
           }
         );
       } catch (err) {
-        console.error("Ошибка обновления корзины", err);
+        console.error(t("profile.cartUpdateError"), err);
         await loadCartData(user.id);
       }
     } else {
@@ -104,11 +105,11 @@ export default function ProfileForm() {
 
   const buyAll = async () => {
     if (basketItems.length === 0) {
-      alert("Корзина пуста");
+      alert(t("profile.emptyCart"));
       return;
     }
 
-    alert("Заказ оформлен! Спасибо за покупку!");
+    alert(t("profile.orderSuccess"));
 
     setBasketItems([]);
 
@@ -117,13 +118,13 @@ export default function ProfileForm() {
         await axios.post(
           `http://localhost:5000/api/basket/${user.id}/update`,
           [],
-          { 
+          {
             headers: { "Content-Type": "application/json" },
-            withCredentials: true 
+            withCredentials: true
           }
         );
       } catch (err) {
-        console.error("Ошибка очистки корзины", err);
+        console.error(t("profile.cartClearError"), err);
       }
     } else {
       localStorage.removeItem("cart");
@@ -132,10 +133,9 @@ export default function ProfileForm() {
 
   const buyOne = async (id: number) => {
     const item = basketItems.find(x => x.id === id);
-
     if (!item) return;
 
-    alert(`Куплен товар ${item.name}`);
+    alert(`${t("profile.bought")} ${item.name}`);
 
     const updated = basketItems.filter(x => x.id !== id);
     setBasketItems(updated);
@@ -145,13 +145,13 @@ export default function ProfileForm() {
         await axios.post(
           `http://localhost:5000/api/basket/${user.id}/update`,
           updated,
-          { 
+          {
             headers: { "Content-Type": "application/json" },
-            withCredentials: true 
+            withCredentials: true
           }
         );
       } catch (err) {
-        console.error("Ошибка обновления корзины", err);
+        console.error(t("profile.cartUpdateError"), err);
         await loadCartData(user.id);
       }
     } else {
@@ -165,9 +165,8 @@ export default function ProfileForm() {
         withCredentials: true
       });
     } catch (error) {
-      console.error("Ошибка при выходе", error);
+      console.error(t("profile.logoutError"), error);
     }
-    
     localStorage.removeItem("cart");
     window.location.href = "/login";
   };
@@ -177,11 +176,11 @@ export default function ProfileForm() {
       "iphone": "iPhone",
       "ipad": "iPad",
       "mac": "Mac",
-      "watch": "Apple Watch",
+      "watch": t("profile.watch"),
       "airpods": "AirPods",
-      "accessories": "Аксессуары"
+      "accessories": t("profile.accessories")
     };
-    return category ? categories[category] || category : "Без категории";
+    return category ? categories[category] || category : t("profile.noCategory");
   };
 
   const cartTotal = basketItems.reduce((sum: number, item: BasketItems) => {
@@ -192,7 +191,7 @@ export default function ProfileForm() {
   const totalItems = basketItems.length;
 
   if (loading) {
-    return <div className="loading">Загрузка...</div>;
+    return <div className="loading">{t("profile.loading")}</div>;
   }
 
   return (
@@ -203,44 +202,44 @@ export default function ProfileForm() {
         </div>
         <div className="profile-info">
           <div className="prf">
-            <h2>{user?.login || "Пользователь"}</h2>
+            <h2>{user?.login || t("profile.user")}</h2>
             <button className="logout-btn" onClick={logout}>
-              <i className="fas fa-sign-out-alt"></i> Выйти
+              <i className="fas fa-sign-out-alt"></i> {t("profile.logout")}
             </button>
           </div>
           <div className="prf">
             <div className="info-item">
               <i className="fas fa-phone"></i>
-              <span>{user?.phone || "Не указан"}</span>
+              <span>{user?.phone || t("profile.notSpecified")}</span>
             </div>
             <div className="info-item">
               <i className="fas fa-tag"></i>
-              <span>{user?.role === "admin" ? "Администратор" : "Покупатель"}</span>
+              <span>{user?.role === "admin" ? t("profile.admin") : t("profile.buyer")}</span>
             </div>
           </div>
           <div className="stats-container">
             <div className="stat-cart">
-              <div className="stat-label">Товаров в корзине</div>
+              <div className="stat-label">{t("profile.cartItems")}</div>
               <div className="stat-value">{totalItems}</div>
             </div>
             <div className="stat-cart">
-              <div className="stat-label">Общая сумма</div>
+              <div className="stat-label">{t("profile.totalAmount")}</div>
               <div className="stat-value">{cartTotal.toLocaleString()} $</div>
             </div>
             {basketItems.length > 0 && (
               <button className="logout-btn" onClick={buyAll}>
-                Купить всё
+                {t("profile.buyAll")}
               </button>
             )}
           </div>
         </div>
       </div>
 
-      <h2 className="section-title">Моя корзина</h2>
+      <h2 className="section-title">{t("profile.myCart")}</h2>
 
       <div className="products">
         {basketItems.length === 0 ? (
-          <div className="no-products">Корзина пуста</div>
+          <div className="no-products">{t("profile.emptyCart")}</div>
         ) : (
           basketItems.map((item) => {
             const product = products.find(p => p.id === item.id);
@@ -252,37 +251,22 @@ export default function ProfileForm() {
                   src={product.image}
                   alt={product.name}
                   className="img"
-                  onError={(e) =>
-                    (e.currentTarget.src = "/img/placeholder.png")
-                  }
+                  onError={(e) => (e.currentTarget.src = "/img/placeholder.png")}
                 />
-
                 <div className="name">{product.name}</div>
-
                 <div className="nalichie">
-                  Наличие:{" "}
-                  <span>
-                    {product.count > 0 ? "В наличии" : "Нет"}
-                  </span>
+                  {t("profile.availability")}:{" "}
+                  <span>{product.count > 0 ? t("profile.inStock") : t("profile.outOfStock")}</span>
                 </div>
-
                 <div className="cost">
-                  Цена: <span>{product.price} $</span>
+                  {t("profile.price")}: <span>{product.price} $</span>
                 </div>
-
                 <div className="buttons">
-                  <button
-                    className="button-s"
-                    onClick={() => removeFromCart(product.id)}
-                  >
+                  <button className="button-s" onClick={() => removeFromCart(product.id)}>
                     <i className="fa-solid fa-box"></i>
                   </button>
-
-                  <button
-                    className="button-s"
-                    onClick={() => buyOne(product.id)}
-                  >
-                    Купить
+                  <button className="button-s" onClick={() => buyOne(product.id)}>
+                    {t("profile.buy")}
                   </button>
                 </div>
               </div>
