@@ -15,5 +15,26 @@
         "name": "iPad Pro 12.9"
       }
     ]
+  },
+  {
+    "user_id": 6,
+    "basket": [
+      {
+        "id": 1,
+        "name": "iPhone 15 Pro Max"
+      },
+      {
+        "id": 2,
+        "name": "iPhone 15"
+      },
+      {
+        "id": 6,
+        "name": "MacBook Air 15"
+      },
+      {
+        "id": 3,
+        "name": "iPad Pro 12.9"
+      }
+    ]
   }
 ]

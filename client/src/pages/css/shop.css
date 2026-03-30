@@ -230,15 +230,13 @@
     font-weight:500;
 }
 
-.buttons{
+.buttons {
     display: flex;
-    column-gap: 61%;
-    flex-wrap: nowrap;
-    align-content: space-between;
+    gap: 10px;
     justify-content: center;
     align-items: center;
-    margin-top: auto;
 }
+
 
 .button-s{
     border:none;

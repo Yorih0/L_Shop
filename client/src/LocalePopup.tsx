@@ -5,11 +5,17 @@ export default function LocalePopup() {
   const [show, setShow] = useState(false);
   const [country, setCountry] = useState("");
 
+  const getSessionLang = () => {
+    const match = document.cookie.match(/lang=([^;]+)/);
+    return match ? match[1] : null;
+  };
+
   const setSessionLang = (lang: string) => {
     document.cookie = `lang=${lang}; path=/; SameSite=Lax`;
   };
 
   useEffect(() => {
+    if (getSessionLang()) return;
     fetch("https://ipapi.co/json/")
       .then(res => res.json())
       .then(data => {

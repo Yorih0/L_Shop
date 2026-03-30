@@ -5,7 +5,8 @@
     "count": 15,
     "name": "iPhone 15 Pro Max",
     "category": "iphone",
-    "image": "https://i-store.by/upload/Sh/imageCache/278/920/9204143753707929.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/278/920/9204143753707929.webp",
+    "tags": ["pro", "smartphone", "high-battery-usage"]
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "count": 20,
     "name": "iPhone 15",
     "category": "iphone",
-    "image": "https://i-store.by/upload/Sh/imageCache/285/417/4177552332219075.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/285/417/4177552332219075.webp",
+    "tags": ["consumer", "smartphone", "medium-battery-usage"]
   },
   {
     "id": 3,
@@ -21,7 +23,8 @@
     "count": 8,
     "name": "iPad Pro 12.9",
     "category": "ipad",
-    "image": "https://i-store.by/upload/Sh/imageCache/149/659/65905755604307.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/149/659/65905755604307.webp",
+    "tags": ["pro", "tablet", "high-performance"]
   },
   {
     "id": 4,
@@ -29,7 +32,8 @@
     "count": 10,
     "name": "iPad Air",
     "category": "ipad",
-    "image": "https://i-store.by/upload/Sh/imageCache/222/893/8930792806611151.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/222/893/8930792806611151.webp",
+    "tags": ["consumer", "tablet", "portable"]
   },
   {
     "id": 5,
@@ -37,7 +41,8 @@
     "count": 5,
     "name": "MacBook Pro 16",
     "category": "macbook",
-    "image": "https://i-store.by/upload/Sh/imageCache/176/953/953092447572525.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/176/953/953092447572525.webp",
+    "tags": ["pro", "laptop", "high-performance"]
   },
   {
     "id": 6,
@@ -45,7 +50,8 @@
     "count": 12,
     "name": "MacBook Air 15",
     "category": "macbook",
-    "image": "https://i-store.by/upload/Sh/imageCache/866/346/3466653364762003.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/866/346/3466653364762003.webp",
+    "tags": ["consumer", "laptop", "portable"]
   },
   {
     "id": 7,
@@ -53,7 +59,8 @@
     "count": 12,
     "name": "Apple Watch Ultra 2",
     "category": "watch",
-    "image": "https://i-store.by/upload/Sh/imageCache/389/087/0871142110209472.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/389/087/0871142110209472.webp",
+    "tags": ["sport", "wearable", "high-battery-usage"]
   },
   {
     "id": 8,
@@ -61,7 +68,8 @@
     "count": 18,
     "name": "Apple Watch Series 9",
     "category": "watch",
-    "image": "https://i-store.by/upload/Sh/imageCache/223/502/5029571429231398.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/223/502/5029571429231398.webp",
+    "tags": ["fitness", "wearable", "medium-battery-usage"]
   },
   {
     "id": 9,
@@ -69,30 +77,34 @@
     "count": 7,
     "name": "AirPods Max",
     "category": "airpods",
-    "image": "https://i-store.by/upload/Sh/imageCache/258/270/2701781338039041.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/258/270/2701781338039041.webp",
+    "tags": ["audio", "premium", "high-battery-usage"]
   },
   {
     "id": 10,
     "price": 249,
     "count": 25,
-    "name": "AirPods Pro (2-го поколения)",
+    "name": "AirPods Pro 2",
     "category": "airpods",
-    "image": "https://i-store.by/upload/Sh/imageCache/385/698/698041245670303.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/385/698/698041245670303.webp",
+    "tags": ["audio", "portable", "medium-battery-usage"]
   },
   {
     "id": 11,
     "price": 299,
     "count": 25,
-    "name": "Magic Keyboard для iPad",
+    "name": "Magic Keyboard",
     "category": "accessories",
-    "image": "https://i-store.by/upload/Sh/imageCache/171/909/9092123736485039.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/171/909/9092123736485039.webp",
+    "tags": ["accessory", "pro", "productivity"]
   },
   {
     "id": 12,
     "price": 129,
     "count": 30,
-    "name": "Apple Pencil (2-го поколения)",
+    "name": "Apple Pencil 2",
     "category": "accessories",
-    "image": "https://i-store.by/upload/Sh/imageCache/294/738/73812329487658.webp"
+    "image": "https://i-store.by/upload/Sh/imageCache/294/738/73812329487658.webp",
+    "tags": ["accessory", "creative", "pro"]
   }
 ]

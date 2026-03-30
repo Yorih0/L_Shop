@@ -11,6 +11,7 @@ interface Product {
   price: number;
   count: number;
   category?: string;
+  tags?: string[];
 }
 
 interface BasketItems {
@@ -23,20 +24,33 @@ interface User {
   login: string;
 }
 
+interface UserTag {
+  tag: string;
+  score: number;
+  lastUsed: number;
+}
+
 export default function ShopForm() {
   const { t } = useTranslation();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [recommended, setRecommended] = useState<Product[]>([]);
   const [cart, setCart] = useState<BasketItems[]>([]);
   const [user, setUser] = useState<User | null>(null);
+
+  const [userTags, setUserTags] = useState<UserTag[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
+
   const [sortValue, setSortValue] = useState(t("shop.sort"));
   const [filterValue, setFilterValue] = useState(t("shop.filter"));
+
   const [selectedSort, setSelectedSort] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("");
 
@@ -44,26 +58,45 @@ export default function ShopForm() {
   const filterRef = useRef<HTMLDivElement>(null);
   const { category } = useParams<{ category: string }>();
 
+  const [liked, setLiked] = useState<number[]>([]);
+  
+
+  // 🌐 обновление переводов
   useEffect(() => {
     setSortValue(t("shop.sort"));
     setFilterValue(t("shop.filter"));
   }, [t]);
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/users/me", {
-          withCredentials: true
-        });
-        setUser(response.data);
-      } catch (error) {
-        console.error(t("shop.userNotAuth"), error);
-        setUser(null);
-      }
-    };
 
-    fetchCurrentUser();
+  // 👤 USER
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/users/me", { withCredentials: true })
+      .then(res => setUser(res.data))
+      .catch(() => setUser(null));
   }, []);
 
+  // 🛍️ PRODUCTS
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/products")
+      .then(res => setProducts(res.data))
+      .catch(() => setError(t("shop.loadError")))
+      .finally(() => setLoading(false));
+  }, [t]);
+
+  // 🛒 CART
+  useEffect(() => {
+    if (user?.id) {
+      axios.get(`http://localhost:5000/api/basket/${user.id}`, {
+        withCredentials: true
+      })
+        .then(res => setCart(res.data))
+        .catch(() => setCart([]));
+    } else if (!loading) {
+      const saved = JSON.parse(localStorage.getItem("cart") || "[]");
+      setCart(saved);
+    }
+  }, [user, loading]);
+
+  // 📂 фильтр по URL
   useEffect(() => {
     if (category) {
       setSelectedFilter(category);
@@ -71,31 +104,7 @@ export default function ShopForm() {
     }
   }, [category]);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/products");
-        setProducts(res.data);
-      } catch {
-        setError(t("shop.loadError"));
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-
-    if (user?.id) {
-      axios.get(`http://localhost:5000/api/basket/${user.id}`, {
-        withCredentials: true
-      })
-        .then(res => setCart(res.data))
-        .catch(() => setCart([]));
-    } else if (user === null && !loading) {
-      const saved: BasketItems[] = JSON.parse(localStorage.getItem("cart") || "[]");
-      setCart(saved);
-    }
-  }, [user, t]);
-
+  // 🔍 FILTER + SORT
   useEffect(() => {
     let result = [...products];
 
@@ -129,6 +138,167 @@ export default function ShopForm() {
     setFilteredProducts(result);
   }, [products, searchTerm, selectedFilter, selectedSort]);
 
+  // 🧠 LOAD TAGS + DECAY
+  useEffect(() => {
+    const saved: UserTag[] = JSON.parse(localStorage.getItem("userTags") || "[]");
+
+    const DAY = 1000 * 60 * 60 * 24;
+
+    const decayed = saved.map(t => {
+      const days = (Date.now() - (t.lastUsed || Date.now())) / DAY;
+      const decay = Math.exp(-0.5 * days);
+
+      return {
+        ...t,
+        score: t.score * decay
+      };
+    });
+
+    setUserTags(decayed);
+    localStorage.setItem("userTags", JSON.stringify(decayed));
+  }, []);
+
+  // 🎯 RECOMMENDATIONS
+  useEffect(() => {
+    if (userTags.length === 0) return;
+
+    axios.post("http://localhost:5000/api/products/recommendations", {
+      tags: userTags
+    })
+      .then(res => setRecommended(res.data))
+      .catch(() => setRecommended([]));
+  }, [userTags]);
+
+  // 🛒 CART TOGGLE
+  const toggleCart = async (id: number, name: string) => {
+    const product = products.find(p => p.id === id);
+
+    let updated: BasketItems[];
+
+    if (cart.some(item => item.id === id)) {
+      updated = cart.filter(item => item.id !== id);
+    } else {
+      updated = [...cart, { id, name }];
+    }
+
+    setCart(updated);
+
+    if (user?.id) {
+      await axios.post(
+        `http://localhost:5000/api/basket/${user.id}/update`,
+        updated,
+        { withCredentials: true }
+      );
+    } else {
+      localStorage.setItem("cart", JSON.stringify(updated));
+    }
+  };
+
+  // 💰 BUY
+  const buy = (id: number) => {
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+
+    alert(`${t("shop.bought")}: ${product.name} 🎉`);
+  };
+
+  // 🎛 UI handlers
+  const handleSort = (value: string, label: string) => {
+    setSelectedSort(value);
+    setSortValue(label);
+    setSortOpen(false);
+  };
+
+  const handleFilter = (value: string, label: string) => {
+    setSelectedFilter(value);
+    setFilterValue(label);
+    setFilterOpen(false);
+  };
+
+  // 🔀 MIX RECOMMENDATIONS
+  const mixedProducts: Product[] = [];
+  const usedIds = new Set<number>();
+
+  let recIndex = 0;
+
+  for (let i = 0; i < filteredProducts.length; i++) {
+    if (i % 4 === 0 && recommended[recIndex]) {
+      const rec = recommended[recIndex];
+
+      if (!usedIds.has(rec.id)) {
+        mixedProducts.push(rec);
+        usedIds.add(rec.id);
+      }
+
+      recIndex++;
+    }
+
+    const product = filteredProducts[i];
+
+    if (!usedIds.has(product.id)) {
+      mixedProducts.push(product);
+      usedIds.add(product.id);
+    }
+  }
+
+  useEffect(() => {
+    const saved = JSON.parse(localStorage.getItem("liked") || "[]");
+    setLiked(saved);
+  }, []);
+
+  const toggleLike = (product: Product) => {
+    let updatedLikes: number[];
+
+    if (liked.includes(product.id)) {
+      updatedLikes = liked.filter(id => id !== product.id);
+    } else {
+      updatedLikes = [...liked, product.id];
+    }
+
+    setLiked(updatedLikes);
+    localStorage.setItem("liked", JSON.stringify(updatedLikes));
+
+    updateTagsFromLikes(updatedLikes);
+  };
+
+  const updateTagsFromLikes = (likedIds: number[]) => {
+    const now = Date.now();
+    const updated: UserTag[] = [];
+
+    likedIds.forEach(id => {
+      const product = products.find(p => p.id === id);
+      if (!product?.tags) return;
+
+      product.tags.forEach(tag => {
+        const existing = updated.find(t => t.tag === tag);
+
+        if (existing) {
+          existing.score += 2;
+          existing.lastUsed = now;
+        } else {
+          updated.push({
+            tag,
+            score: 2,
+            lastUsed: now
+          });
+        }
+      });
+    });
+
+    setUserTags(updated);
+    localStorage.setItem("userTags", JSON.stringify(updated));
+  };
+
+  useEffect(() => {
+    const savedLikes = JSON.parse(localStorage.getItem("liked") || "[]");
+    setLiked(savedLikes);
+
+    if (products.length > 0) {
+      updateTagsFromLikes(savedLikes);
+    }
+  }, [products]);
+
+  // 👆 закрытие dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
@@ -142,60 +312,6 @@ export default function ShopForm() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
-
-  const toggleCart = async (id: number, name: string) => {
-    let updated: BasketItems[];
-
-    if (cart.some(item => item.id === id)) {
-      updated = cart.filter(item => item.id !== id);
-    } else {
-      updated = [...cart, { id, name }];
-    }
-
-    setCart(updated);
-
-    if (user?.id) {
-      try {
-        await axios.post(
-          `http://localhost:5000/api/basket/${user.id}/update`,
-          updated,
-          {
-            headers: { "Content-Type": "application/json" },
-            withCredentials: true
-          }
-        );
-      } catch (err: any) {
-        console.error(t("shop.basketUpdateError"), err);
-        const res = await axios.get(`http://localhost:5000/api/basket/${user.id}`, {
-          withCredentials: true
-        });
-        setCart(res.data);
-      }
-    } else {
-      localStorage.setItem("cart", JSON.stringify(updated));
-    }
-  };
-
-  const buy = (id: number) => {
-    const product = products.find(p => p.id === id);
-    if (!product) {
-      alert(t("shop.productNotFound"));
-      return;
-    }
-    alert(`${t("shop.bought")}: ${product.name} 🎉`);
-  };
-
-  const handleSort = (value: string, label: string) => {
-    setSelectedSort(value);
-    setSortValue(label);
-    setSortOpen(false);
-  };
-
-  const handleFilter = (value: string, label: string) => {
-    setSelectedFilter(value);
-    setFilterValue(label);
-    setFilterOpen(false);
-  };
 
   if (loading) return <div className="loading">{t("shop.loading")}</div>;
   if (error) return <div className="error">{error}</div>;
@@ -260,10 +376,10 @@ export default function ShopForm() {
       </div>
 
       <div className="products">
-        {filteredProducts.length === 0 ? (
+        {mixedProducts.length === 0 ? (
           <div className="no-products">{t("shop.noProducts")}</div>
         ) : (
-          filteredProducts.map(product => (
+          mixedProducts.map(product => (
             <div className="cart" key={product.id}>
               <img
                 src={product.image}
@@ -290,6 +406,9 @@ export default function ShopForm() {
                 <button className="button-s" onClick={() => buy(product.id)}>
                   {t("shop.buy")}
                 </button>
+                <button className="button-s" onClick={() => toggleLike(product)}>
+                    {liked.includes(product.id) ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}
+                  </button>
               </div>
             </div>
           ))

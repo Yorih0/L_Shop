@@ -30,3 +30,16 @@ export const getProductsId = (req:Request,res:Response) => {
     res.status(500).json({ error: "Ошибка сервера" });
   }
 };
+
+export const getRecommendations = (req: Request, res: Response) => {
+  try {
+    const { tags } = req.body;
+
+    const products = ProductService.getRecommendedProducts(tags);
+
+    res.json(products);
+  } catch (error) {
+    console.error("Ошибка рекомендаций:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+};

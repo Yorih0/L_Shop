@@ -1,0 +1,285 @@
+
+
+===== ShopPage.tsx (C:\Users\Yorih0\Desktop\L_Shop\client\src\pages\ShopPage.tsx) =====
+
+import Header from "./Header";
+import Footer from "./Footer";
+import ShopForm from "./ShopForm";
+import "./css/shop.css";
+import { useTranslation } from "react-i18next";
+
+import vector1 from "./img/main/Vector.png";
+import vector2 from "./img/main/Vector (1).png";
+import vector3 from "./img/main/Vector (2).png";
+import blend1 from "./img/main/Blend Group 1.png";
+import blend2 from "./img/main/Blend Group 2.png";
+import macbookPro from "./img/main/Macbook_16_Pro.png";
+import macbookAir from "./img/main/Macbook_14_Air.png";
+import iphone from "./img/main/Iphone_17_Pro_Max.png";
+import airpods from "./img/main/AirPods_3_Pro.png";
+
+export default function ShopPage() {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <Header />
+      <main className="main-s">
+        <div className="News">
+          <div className="hello_screen">
+            <h1 className="title">
+              {t("shop.Harmony")}<span className="gradient-text"> {t("shop.perfection")}</span>
+            </h1>
+            
+            <img src={vector1} className="vector1" alt="" />
+            <img src={vector2} className="vector2" alt="" />
+            <img src={vector3} className="vector3" alt="" />
+            <img src={blend1} className="vector4" alt="" />
+            <img src={blend2} className="vector5" alt="" />
+            
+            <p className="subtitle">{t("shop.NewItems")}</p>
+            <div className="news">
+              <div className="new">
+                <img src={macbookPro} alt="" />
+              </div>
+              <div className="new">
+                <img src={macbookAir} alt="" />
+              </div>
+              <div className="new">
+                <img src={iphone} alt="" />
+              </div>
+              <div className="new">
+                <img src={airpods} alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <ShopForm />
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+===== productController.ts (C:\Users\Yorih0\Desktop\L_Shop\server\src\controllers\productController.ts) =====
+
+import { Request, Response } from "express";
+import { ProductService } from "../services/productService";
+
+export const getProducts = (req: Request, res: Response) => {
+  try {
+    const { search, filter, sort } = req.query;
+    
+    const products = ProductService.getFilterProducts(
+      search as string,
+      filter as string,
+      sort as string
+    );
+    
+    res.json(products);
+  } catch (error) {
+    console.error("Ошибка в getProducts:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+};
+
+export const getProductsId = (req:Request,res:Response) => {
+  try{
+    const {id} = req.query;
+
+    const products = ProductService.getProductsId(
+      (id as unknown) as number[]
+    );
+  }catch(error){
+    console.error("Ошибка в getProductsId:", error);
+    res.status(500).json({ error: "Ошибка сервера" });
+  }
+};
+
+===== products.json (C:\Users\Yorih0\Desktop\L_Shop\server\src\db\products.json) =====
+
+[
+  {
+    "id": 1,
+    "price": 1599,
+    "count": 15,
+    "name": "iPhone 15 Pro Max",
+    "category": "iphone",
+    "image": "https://i-store.by/upload/Sh/imageCache/278/920/9204143753707929.webp"
+  },
+  {
+    "id": 2,
+    "price": 999,
+    "count": 20,
+    "name": "iPhone 15",
+    "category": "iphone",
+    "image": "https://i-store.by/upload/Sh/imageCache/285/417/4177552332219075.webp"
+  },
+  {
+    "id": 3,
+    "price": 1299,
+    "count": 8,
+    "name": "iPad Pro 12.9",
+    "category": "ipad",
+    "image": "https://i-store.by/upload/Sh/imageCache/149/659/65905755604307.webp"
+  },
+  {
+    "id": 4,
+    "price": 749,
+    "count": 10,
+    "name": "iPad Air",
+    "category": "ipad",
+    "image": "https://i-store.by/upload/Sh/imageCache/222/893/8930792806611151.webp"
+  },
+  {
+    "id": 5,
+    "price": 3499,
+    "count": 5,
+    "name": "MacBook Pro 16",
+    "category": "macbook",
+    "image": "https://i-store.by/upload/Sh/imageCache/176/953/953092447572525.webp"
+  },
+  {
+    "id": 6,
+    "price": 1299,
+    "count": 12,
+    "name": "MacBook Air 15",
+    "category": "macbook",
+    "image": "https://i-store.by/upload/Sh/imageCache/866/346/3466653364762003.webp"
+  },
+  {
+    "id": 7,
+    "price": 799,
+    "count": 12,
+    "name": "Apple Watch Ultra 2",
+    "category": "watch",
+    "image": "https://i-store.by/upload/Sh/imageCache/389/087/0871142110209472.webp"
+  },
+  {
+    "id": 8,
+    "price": 429,
+    "count": 18,
+    "name": "Apple Watch Series 9",
+    "category": "watch",
+    "image": "https://i-store.by/upload/Sh/imageCache/223/502/5029571429231398.webp"
+  },
+  {
+    "id": 9,
+    "price": 549,
+    "count": 7,
+    "name": "AirPods Max",
+    "category": "airpods",
+    "image": "https://i-store.by/upload/Sh/imageCache/258/270/2701781338039041.webp"
+  },
+  {
+    "id": 10,
+    "price": 249,
+    "count": 25,
+    "name": "AirPods Pro (2-го поколения)",
+    "category": "airpods",
+    "image": "https://i-store.by/upload/Sh/imageCache/385/698/698041245670303.webp"
+  },
+  {
+    "id": 11,
+    "price": 299,
+    "count": 25,
+    "name": "Magic Keyboard для iPad",
+    "category": "accessories",
+    "image": "https://i-store.by/upload/Sh/imageCache/171/909/9092123736485039.webp"
+  },
+  {
+    "id": 12,
+    "price": 129,
+    "count": 30,
+    "name": "Apple Pencil (2-го поколения)",
+    "category": "accessories",
+    "image": "https://i-store.by/upload/Sh/imageCache/294/738/73812329487658.webp"
+  }
+]
+
+===== productService.ts (C:\Users\Yorih0\Desktop\L_Shop\server\src\services\productService.ts) =====
+
+import fs from "fs"
+import path from "path"
+import { Product } from "../types/Product"
+
+const path_products =  path.join(__dirname,"../db/products.json")
+
+export class ProductService{
+    static getAllProductds():Product[] {
+        return JSON.parse(fs.readFileSync(path_products, 'utf8'));
+    }
+    static getFilterProducts(search?:string,filter?:string,sort?:string):Product[]{
+        let products = this.getAllProductds()
+
+        if(search){
+            products = products.filter(pr=>pr.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+        }
+
+        if(filter){
+            products = products.filter(pr=>pr.category === filter)
+        }
+
+        if(sort){
+            switch(sort){
+                case "price":
+                    products.sort((pr1,pr2)=>pr1.price - pr2.price)
+                    break
+                case "price_rev":
+                    products.sort((pr1,pr2)=>pr2.price - pr1.price)
+                    break
+                case "name":
+                    products.sort((pr1,pr2)=>pr1.name.localeCompare(pr2.name))
+                    break
+                case "name_rev":
+                    products.sort((pr1,pr2)=>pr1.name.localeCompare(pr2.name))
+                    break
+            }
+        }
+
+        return products
+    }
+    static getProductsId(id:number[]):Product[]{
+        let products = this.getAllProductds()
+
+        return products.filter((x)=>id.includes(x.id))
+    }
+}
+
+===== Product.ts (C:\Users\Yorih0\Desktop\L_Shop\server\src\types\Product.ts) =====
+
+export interface Product {
+    id:number
+    price:number
+    count:number
+    name:string
+    category: 'iphone' | 'ipad' | 'mac' | 'watch' | 'airpods' | 'accessories' | 'TV'
+    image:string
+}
+
+===== User.ts (C:\Users\Yorih0\Desktop\L_Shop\server\src\types\User.ts) =====
+
+export interface User {
+    id: number;
+    login: string;
+    password: string;
+    phone: string;
+    role: "user" | "admin";
+}
+
+export interface RegisterRequest {
+    login: string;
+    password: string;
+    repeatPassword: string;
+    phone: string;
+}
+
+export interface LoginRequest {
+    login: string;
+    password: string;
+}
+
+export interface AuthResponse {
+    user: User;
+    token: string;
+}
