@@ -50,9 +50,10 @@ export default function ShopForm() {
 
   const [sortValue, setSortValue] = useState(t("shop.sort"));
   const [filterValue, setFilterValue] = useState(t("shop.filter"));
+  const [deffilter,setdef] = useState(t("shop.filter"));
 
   const [selectedSort, setSelectedSort] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
 
   const sortRef = useRef<HTMLDivElement>(null);
   const filterRef = useRef<HTMLDivElement>(null);
@@ -65,6 +66,7 @@ export default function ShopForm() {
   useEffect(() => {
     setSortValue(t("shop.sort"));
     setFilterValue(t("shop.filter"));
+    setdef(t("shop.filter"));
   }, [t]);
 
   // 👤 USER
@@ -101,8 +103,12 @@ export default function ShopForm() {
     if (category) {
       setSelectedFilter(category);
       setFilterValue(category);
+    } else {
+      setSelectedFilter(null);
+      setFilterValue(deffilter);
     }
   }, [category]);
+
 
   // 🔍 FILTER + SORT
   useEffect(() => {

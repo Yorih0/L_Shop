@@ -3,7 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ShopPage from "./pages/ShopPage";
 import ProfilePage from "./pages/ProfilePage";
-import LocalePopup from "./LocalePopup";
+import LocalePopup from "./locales/LocalePopup";
 import "./pages/css/locale-popup.css";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
         <Route path="/" element={<ShopPage />} />
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/shop/:category" element={<ShopPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/user" element={<ProfilePage />} />
       </Routes>
     </>
   );

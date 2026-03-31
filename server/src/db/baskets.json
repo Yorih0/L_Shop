@@ -36,5 +36,14 @@
         "name": "iPad Pro 12.9"
       }
     ]
+  },
+  {
+    "user_id": 3,
+    "basket": [
+      {
+        "id": 2,
+        "name": "iPhone 15"
+      }
+    ]
   }
 ]

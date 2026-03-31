@@ -75,7 +75,7 @@ export default function LoginForm() {
           ></i>
         </div>
 
-        <button type="submit" className="btn">
+        <button type="submit" className="btn"> 
           {t("login.button")}
         </button>
 
