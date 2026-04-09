@@ -2,18 +2,15 @@ import { BasketItem, Basket } from "../types/Basket";
 import fs from "fs";
 import path from "path";
 
-// Make sure the db directory exists
 const dbDir = path.join(__dirname, "../db");
 const dbPath = path.join(dbDir, "baskets.json");
 
-// Create db directory if it doesn't exist
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
 const readDB = (): Basket[] => {
   if (!fs.existsSync(dbPath)) {
-    // Create empty baskets file if it doesn't exist
     writeDB([]);
     return [];
   }

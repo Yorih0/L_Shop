@@ -19,7 +19,7 @@
       "login": "user_1",
       "password": "123321",
       "phone": "+375 33 613 5003",
-      "role": "user"
+      "role": "manager"
     },
     {
       "id": 4,
@@ -40,7 +40,7 @@
       "login": "ivan2",
       "password": "123456",
       "phone": "+375 33 613 5523",
-      "role": "user"
+      "role": "buyer"
     }
   ]
 }

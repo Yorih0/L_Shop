@@ -9,7 +9,7 @@ export default function Header() {
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/getMe", {
+    fetch("http://localhost:5000/api/users/me", {
       credentials: "include"
     })
       .then(res => res.json())
@@ -26,8 +26,8 @@ export default function Header() {
 
   const profilePath =
     role === "admin"? "/profile/admin"
-      : role === "manager"? "/profile/manager"
-      : "/profile/user";
+    : role === "manager"? "/profile/manager"
+    : "/profile/user";
 
   return (
     <header className="header">
@@ -43,10 +43,14 @@ export default function Header() {
       </nav>
 
       <div className="icons-s">
-        <Link to={profilePath}>
+        <Link to="/profile/user">
           <i className="fas fa-shopping-bag"></i>
         </Link>
-
+        {(role === "manager" || role === "admin") ? (
+          <Link to={profilePath}>
+          <i className="fa-regular fa-address-card"></i>
+          </Link>
+        ) : null}
         <div className="language-switcher">
           <button
             onClick={() => changeLanguage("by")}

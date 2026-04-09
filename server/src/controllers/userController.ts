@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { findUserByLogin, createUser, validateUser } from '../services/userService';
+import { findUserByLogin, createUser, validateUser,readDB, updateUserByRole } from '../services/userService';
 import { User, RegisterRequest, LoginRequest } from '../types/User';
 import jwt from "jsonwebtoken";
 
@@ -84,14 +84,14 @@ export const login = async (req: Request, res: Response): Promise<void> => {
             role: user.role
         },
         "SECRET_KEY",
-        { expiresIn: "10m" }
+        { expiresIn: "30m" }
         );
 
         res.cookie("session", token, {
             httpOnly: true,
             secure: false,
             sameSite: "lax",
-            maxAge: 10 * 60 * 1000
+            maxAge: 30 * 60 * 1000
         });
         res.json({ message: "Вход выполнен успешно" });
     } catch (error) {
@@ -119,5 +119,47 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
         });
     } catch {
         res.status(401).json({ error: "Token expired" });
+    }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  res.clearCookie("session", {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    path: "/"
+  });
+
+  res.status(200).json({ message: "Logged out" });
+};
+
+export const getUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const db = await readDB();
+    res.json(db.users);
+  } catch (error) {
+    console.error("Ошибка при получении пользователей:", error);
+    res.status(500).json({ message: "Ошибка сервера" });
+  }
+};
+
+export const setRole = async (req :Request,res:Response): Promise<void> =>{
+    try {
+        const userId = Number(req.params.id);
+        const {role} = req.body;
+        if(!role){
+            res.status(400).json({message:"Не передана роль"})
+        }
+        const user = await updateUserByRole(userId,role);
+
+        if(!user){
+            res.status(404).json({message:"Пользователь не найден"});
+            return;
+        }
+
+        res.status(200).json({message:"Роль обновлена",user:user});
+    }catch (error){
+        console.error("Ошибка изменения роли пользователяй:",error);
+        res.status(500).json({message: "Ошибка сервера"});
     }
 };

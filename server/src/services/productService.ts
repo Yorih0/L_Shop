@@ -38,7 +38,7 @@ export class ProductService {
 
         return products
     }
-    
+
     static getProductsId(id: number[]): Product[] {
         let products = this.getAllProductds()
 
@@ -67,5 +67,48 @@ export class ProductService {
             .filter(x => x.score > 0)
             .sort((a, b) => b.score - a.score)
             .map(x => x.product);
+    }
+    static saveProducts(products: Product[]) {
+        fs.writeFileSync(path_products, JSON.stringify(products, null, 2), "utf8");
+    }
+
+    static createProduct(data: Omit<Product, "id">): Product {
+        const products = this.getAllProductds();
+
+        const newProduct: Product = {
+            id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
+            ...data
+        };
+
+        products.push(newProduct);
+        this.saveProducts(products);
+
+        return newProduct;
+    }
+
+    static editProduct(id: number, data: Partial<Product>): Product {
+        const products = this.getAllProductds();
+        const index = products.findIndex(p => p.id === id);
+
+        if (index === -1) {
+            throw new Error("Product not found");
+        }
+
+        products[index] = { ...products[index], ...data };
+        this.saveProducts(products);
+
+        return products[index];
+    }
+
+    static deleteProduct(id: number): boolean {
+        const products = this.getAllProductds();
+        const newProducts = products.filter(p => p.id !== id);
+
+        if (newProducts.length === products.length) {
+            throw new Error("Product not found");
+        }
+
+        this.saveProducts(newProducts);
+        return true;
     }
 }

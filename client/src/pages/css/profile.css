@@ -319,3 +319,9 @@
     padding: 50px;
     color: #666;
 }
+
+.tabs
+{
+    display: flex;
+    gap:10px
+}

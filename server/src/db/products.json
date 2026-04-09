@@ -2,11 +2,15 @@
   {
     "id": 1,
     "price": 1599,
-    "count": 15,
+    "count": 52,
     "name": "iPhone 15 Pro Max",
     "category": "iphone",
     "image": "https://i-store.by/upload/Sh/imageCache/278/920/9204143753707929.webp",
-    "tags": ["pro", "smartphone", "high-battery-usage"]
+    "tags": [
+      "pro",
+      "smartphone",
+      "high-battery-usage"
+    ]
   },
   {
     "id": 2,
@@ -15,7 +19,11 @@
     "name": "iPhone 15",
     "category": "iphone",
     "image": "https://i-store.by/upload/Sh/imageCache/285/417/4177552332219075.webp",
-    "tags": ["consumer", "smartphone", "medium-battery-usage"]
+    "tags": [
+      "consumer",
+      "smartphone",
+      "medium-battery-usage"
+    ]
   },
   {
     "id": 3,
@@ -24,7 +32,11 @@
     "name": "iPad Pro 12.9",
     "category": "ipad",
     "image": "https://i-store.by/upload/Sh/imageCache/149/659/65905755604307.webp",
-    "tags": ["pro", "tablet", "high-performance"]
+    "tags": [
+      "pro",
+      "tablet",
+      "high-performance"
+    ]
   },
   {
     "id": 4,
@@ -33,7 +45,11 @@
     "name": "iPad Air",
     "category": "ipad",
     "image": "https://i-store.by/upload/Sh/imageCache/222/893/8930792806611151.webp",
-    "tags": ["consumer", "tablet", "portable"]
+    "tags": [
+      "consumer",
+      "tablet",
+      "portable"
+    ]
   },
   {
     "id": 5,
@@ -42,7 +58,11 @@
     "name": "MacBook Pro 16",
     "category": "macbook",
     "image": "https://i-store.by/upload/Sh/imageCache/176/953/953092447572525.webp",
-    "tags": ["pro", "laptop", "high-performance"]
+    "tags": [
+      "pro",
+      "laptop",
+      "high-performance"
+    ]
   },
   {
     "id": 6,
@@ -51,7 +71,11 @@
     "name": "MacBook Air 15",
     "category": "macbook",
     "image": "https://i-store.by/upload/Sh/imageCache/866/346/3466653364762003.webp",
-    "tags": ["consumer", "laptop", "portable"]
+    "tags": [
+      "consumer",
+      "laptop",
+      "portable"
+    ]
   },
   {
     "id": 7,
@@ -60,7 +84,11 @@
     "name": "Apple Watch Ultra 2",
     "category": "watch",
     "image": "https://i-store.by/upload/Sh/imageCache/389/087/0871142110209472.webp",
-    "tags": ["sport", "wearable", "high-battery-usage"]
+    "tags": [
+      "sport",
+      "wearable",
+      "high-battery-usage"
+    ]
   },
   {
     "id": 8,
@@ -69,7 +97,11 @@
     "name": "Apple Watch Series 9",
     "category": "watch",
     "image": "https://i-store.by/upload/Sh/imageCache/223/502/5029571429231398.webp",
-    "tags": ["fitness", "wearable", "medium-battery-usage"]
+    "tags": [
+      "fitness",
+      "wearable",
+      "medium-battery-usage"
+    ]
   },
   {
     "id": 9,
@@ -78,7 +110,11 @@
     "name": "AirPods Max",
     "category": "airpods",
     "image": "https://i-store.by/upload/Sh/imageCache/258/270/2701781338039041.webp",
-    "tags": ["audio", "premium", "high-battery-usage"]
+    "tags": [
+      "audio",
+      "premium",
+      "high-battery-usage"
+    ]
   },
   {
     "id": 10,
@@ -87,7 +123,11 @@
     "name": "AirPods Pro 2",
     "category": "airpods",
     "image": "https://i-store.by/upload/Sh/imageCache/385/698/698041245670303.webp",
-    "tags": ["audio", "portable", "medium-battery-usage"]
+    "tags": [
+      "audio",
+      "portable",
+      "medium-battery-usage"
+    ]
   },
   {
     "id": 11,
@@ -96,7 +136,11 @@
     "name": "Magic Keyboard",
     "category": "accessories",
     "image": "https://i-store.by/upload/Sh/imageCache/171/909/9092123736485039.webp",
-    "tags": ["accessory", "pro", "productivity"]
+    "tags": [
+      "accessory",
+      "pro",
+      "productivity"
+    ]
   },
   {
     "id": 12,
@@ -105,6 +149,21 @@
     "name": "Apple Pencil 2",
     "category": "accessories",
     "image": "https://i-store.by/upload/Sh/imageCache/294/738/73812329487658.webp",
-    "tags": ["accessory", "creative", "pro"]
+    "tags": [
+      "accessory",
+      "creative",
+      "pro"
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Iphone52",
+    "price": 0,
+    "count": 54,
+    "category": "Iphone4",
+    "image": "data:image/jpeg;base64,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",
+    "tags": [
+      "Iphone4"
+    ]
   }
 ]

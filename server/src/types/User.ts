@@ -3,7 +3,7 @@ export interface User {
     login: string;
     password: string;
     phone: string;
-    role: "user" | "admin";
+    role: "user" | "admin" | "manager";
 }
 
 export interface RegisterRequest {

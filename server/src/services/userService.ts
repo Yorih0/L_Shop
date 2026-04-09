@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { User, RegisterRequest } from '../types/User';
+import { login } from '../controllers/userController';
 
 const DB_PATH = path.join(__dirname, '../db/users.json');
 
@@ -53,4 +54,17 @@ export const validateUser = async (login: string, password: string): Promise<Use
     const isValid = password === user.password;
     
     return isValid ? user : null;
+};
+
+export const updateUserByRole = async (id: number,role: "user" | "admin" | "manager"): Promise<User | null> => {
+    const db = await readDB();
+
+    const userIndex = db.users.findIndex(u => u.id === id);
+    if (userIndex === -1) return null;
+
+    db.users[userIndex].role = role;
+
+    await writeDB(db);
+
+    return db.users[userIndex];
 };
