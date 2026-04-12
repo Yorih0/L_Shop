@@ -20,6 +20,9 @@ app.use("/api/products",productRoutes)
 import basketRoutes from "./routes/basketRoutes"
 app.use("/api/basket", basketRoutes);
 
+import ReviewRoutes from "./routes/reviewRoutes"
+app.use("/api/reviews",ReviewRoutes)
+
 app.listen(5000, () => {
   console.log("Server started on http://localhost:5000");
 });

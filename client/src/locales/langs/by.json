@@ -44,7 +44,13 @@
         "basketUpdateError": "Памылка захавання кошыка",
         "productNotFound": "Тавар не знойдзены",
         "bought": "Вы набылі",
-        "noProducts": "Нічога не знойдзена"
+        "noProducts": "Нічога не знойдзена",
+        "noReviews":"Няма водгукаў",
+        "btn_delete":"Выдаліць",
+        "placeholderComments":"Ваш каментар...",
+        "rating_text":"Ацэнка",
+        "btn_close":"Закрыць",
+        "btn_createComments":"Напісаць"
     },
     "profile": {
         "notAuthorized": "Карыстальнік не аўтарызаваны",

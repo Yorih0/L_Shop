@@ -30,6 +30,16 @@ interface UserTag {
   lastUsed: number;
 }
 
+interface Review {
+  id: number,
+  userId: number;
+  userName: string;
+  productId: number;
+  rating: 1 | 2 | 3 | 4 | 5;
+  comment: string;
+  date: string;
+}
+
 export default function ShopForm() {
   const { t } = useTranslation();
 
@@ -50,7 +60,7 @@ export default function ShopForm() {
 
   const [sortValue, setSortValue] = useState(t("shop.sort"));
   const [filterValue, setFilterValue] = useState(t("shop.filter"));
-  const [deffilter,setdef] = useState(t("shop.filter"));
+  const [deffilter, setdef] = useState(t("shop.filter"));
 
   const [selectedSort, setSelectedSort] = useState("");
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
@@ -60,7 +70,14 @@ export default function ShopForm() {
   const { category } = useParams<{ category: string }>();
 
   const [liked, setLiked] = useState<number[]>([]);
-  
+
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+
+  const [commentText, setCommentText] = useState("");
+  const [commentRating, setCommentRating] = useState<Number>(5);
+
+
 
   // 🌐 обновление переводов
   useEffect(() => {
@@ -295,6 +312,55 @@ export default function ShopForm() {
     localStorage.setItem("userTags", JSON.stringify(updated));
   };
 
+  const openComments = async (product: Product) => {
+    setSelectedProduct(product);
+
+    try {
+      const res = await axios.get(`http://localhost:5000/api/reviews/${product.id}`);
+      setReviews(res.data);
+    } catch {
+      setReviews([]);
+    }
+  };
+
+  const closeComments = () => {
+    setSelectedProduct(null);
+  };
+
+  const createComment = async () => {
+    if (!user || !selectedProduct) {
+      alert("Нужо зарегистироваться");
+      return;
+    }
+
+    try {
+      const res = await axios.post(
+        `http://localhost:5000/api/reviews/${selectedProduct.id}`,
+        {
+          userId: user.id,
+          rating: commentRating,
+          comment: commentText,
+        }
+      );
+
+      setReviews(prev => [...prev, res.data]);
+
+    } catch (e) {
+      console.log("Ошибка создания");
+    }
+  };
+
+  const deleteComment = async (reviewId: number) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/reviews/${reviewId}`);
+
+      setReviews(prev => prev.filter(r => r.id !== reviewId));
+
+    } catch (e) {
+      console.log("Ошибка удаления");
+    }
+  };
+
   useEffect(() => {
     const savedLikes = JSON.parse(localStorage.getItem("liked") || "[]");
     setLiked(savedLikes);
@@ -386,7 +452,7 @@ export default function ShopForm() {
           <div className="no-products">{t("shop.noProducts")}</div>
         ) : (
           mixedProducts.map(product => (
-            <div className="cart" key={product.id}>
+            <div className="cart" key={product.id} onClick={() => openComments(product)}>
               <img
                 src={product.image}
                 alt={product.name}
@@ -413,13 +479,80 @@ export default function ShopForm() {
                   {t("shop.buy")}
                 </button>
                 <button className="button-s" onClick={() => toggleLike(product)}>
-                    {liked.includes(product.id) ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}
-                  </button>
+                  {liked.includes(product.id) ? <i className="fa-solid fa-heart"></i> : <i className="fa-regular fa-heart"></i>}
+                </button>
               </div>
             </div>
           ))
         )}
       </div>
+
+      {selectedProduct && (
+        <div className="modal-overlay" onClick={closeComments}>
+
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+
+            <h2>{selectedProduct.name}</h2>
+            <div className="reviews">
+              {reviews.length === 0 ? (
+                <p>{t("shop.noReviews")}</p>
+              ) : (
+                reviews.map((r, i) => (
+                  <div key={i} className="review">
+
+                    <div className="review-header">
+                      <span className="user">{r.userName}</span>
+                      <span className="user">{r.date}</span>
+                      <span className="stars">
+                        {[...Array(r.rating)].map((_, idx) => (
+                          <i key={idx} className="fa-regular fa-star"></i>
+                        ))}
+                      </span>
+                    </div>
+
+                    <div className="text">{r.comment}</div>
+                    {user?.id === r.userId && (
+                      <button
+                        className="button-s"
+                        onClick={() => deleteComment(r.id)}
+                      >
+                        {t("shop.btn_delete")}
+                      </button>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+            <div className="input-zone">
+              <textarea
+                className="comment"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder={t("shop.placeholderComments")}
+                autoComplete={"off"}
+                rows={3}
+              />
+              <span className="rating-text">{t("shop.rating_text")} : &nbsp;
+                {[...Array(commentRating)].map((_, i) => (
+                  <i key={i} className="fa-regular fa-star"></i>
+                ))}
+              </span>
+              <input
+                className="rating-input"
+                type="range"
+                min="1"
+                max="5"
+                value={String(commentRating)}
+                onChange={(e) => setCommentRating(Number(e.target.value))}
+              />
+              <div className="buttons">
+                <button className="button-s" onClick={closeComments}>{t("shop.btn_close")}</button>
+                <button className="button-s" onClick={createComment}>{t("shop.btn_createComments")}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

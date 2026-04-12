@@ -68,3 +68,11 @@ export const updateUserByRole = async (id: number,role: "user" | "admin" | "mana
 
     return db.users[userIndex];
 };
+
+export const getUserById = async (id: number): Promise<User | null> => {
+    const db = await readDB();
+
+    const user = db.users.find(u => u.id === id);
+
+    return user || null;
+};

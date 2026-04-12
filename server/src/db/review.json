@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "userId": 1,
+    "userName": "admin",
+    "productId": 1,
+    "rating": 2,
+    "comment": "ads",
+    "date": "2026-04-12T14:39:41.575Z"
+  },
+  {
+    "id": 2,
+    "userId": 6,
+    "userName": "ivan2",
+    "productId": 1,
+    "rating": 5,
+    "comment": "",
+    "date": "2026-04-12T14:40:26.012Z"
+  }
+]

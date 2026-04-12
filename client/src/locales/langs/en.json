@@ -44,7 +44,13 @@
         "basketUpdateError": "Error updating cart",
         "productNotFound": "Product not found",
         "bought": "You bought",
-        "noProducts": "Nothing found"
+        "noProducts": "Nothing found",
+        "noReviews": "No reviews",
+        "btn_delete": "Delete",
+        "placeholderComments": "Your comment...",
+        "rating_text": "Rating",
+        "btn_close": "Close",
+        "btn_createComments": "Write"
     },
     "profile": {
         "notAuthorized": "User not authorized",

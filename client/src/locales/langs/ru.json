@@ -44,7 +44,13 @@
         "basketUpdateError": "Ошибка сохранения корзины",
         "productNotFound": "Товар не найден",
         "bought": "Вы купили",
-        "noProducts": "Ничего не найдено"
+        "noProducts": "Ничего не найдено",
+        "noReviews":"Нет отзывов",
+        "btn_delete":"Удалить",
+        "placeholderComments":"Ваш комментарий...",
+        "rating_text":"Оценка",
+        "btn_close":"Закрыть",
+        "btn_createComments":"Написать"
     },
     "profile": {
         "notAuthorized": "Пользователь не авторизован",

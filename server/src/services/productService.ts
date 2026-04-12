@@ -5,11 +5,11 @@ import { Product } from "../types/Product"
 const path_products = path.join(__dirname, "../db/products.json")
 
 export class ProductService {
-    static getAllProductds(): Product[] {
+    static getAllProducts(): Product[] {
         return JSON.parse(fs.readFileSync(path_products, 'utf8'));
     }
     static getFilterProducts(search?: string, filter?: string, sort?: string): Product[] {
-        let products = this.getAllProductds()
+        let products = this.getAllProducts()
 
         if (search) {
             products = products.filter(pr => pr.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
@@ -40,13 +40,13 @@ export class ProductService {
     }
 
     static getProductsId(id: number[]): Product[] {
-        let products = this.getAllProductds()
+        let products = this.getAllProducts()
 
         return products.filter((x) => id.includes(x.id))
     }
 
     static getRecommendedProducts(userTags: { tag: string, score: number }[]): Product[] {
-        const products = this.getAllProductds();
+        const products = this.getAllProducts();
 
         const scored = products.map(product => {
             let score = 0;
@@ -73,7 +73,7 @@ export class ProductService {
     }
 
     static createProduct(data: Omit<Product, "id">): Product {
-        const products = this.getAllProductds();
+        const products = this.getAllProducts();
 
         const newProduct: Product = {
             id: products.length > 0 ? products[products.length - 1].id + 1 : 1,
@@ -87,7 +87,7 @@ export class ProductService {
     }
 
     static editProduct(id: number, data: Partial<Product>): Product {
-        const products = this.getAllProductds();
+        const products = this.getAllProducts();
         const index = products.findIndex(p => p.id === id);
 
         if (index === -1) {
@@ -100,15 +100,21 @@ export class ProductService {
         return products[index];
     }
 
-    static deleteProduct(id: number): boolean {
-        const products = this.getAllProductds();
-        const newProducts = products.filter(p => p.id !== id);
+    static deleteProduct(id: number) {
+        if (typeof id !== "number") {
+            throw new Error("Invalid product id");
+        }
 
-        if (newProducts.length === products.length) {
+        const products = this.getAllProducts();
+        const index = products.findIndex(p => p.id === id);
+
+        if (index === -1) {
             throw new Error("Product not found");
         }
 
-        this.saveProducts(newProducts);
-        return true;
+        const [deleted] = products.splice(index, 1);
+        this.saveProducts(products);
+
+        return deleted;
     }
 }
