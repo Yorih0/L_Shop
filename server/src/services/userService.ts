@@ -12,11 +12,16 @@ interface Database {
 export const readDB = async (): Promise<Database> => {
     try {
         const data = await fs.readFile(DB_PATH, 'utf-8');
-        return JSON.parse(data);
+        const parsed = JSON.parse(data);
+
+        return {
+            users: Array.isArray(parsed.users) ? parsed.users : []
+        };
     } catch (error) {
         return { users: [] };
     }
 };
+
 
 export const writeDB = async (data: Database): Promise<void> => {
     await fs.writeFile(DB_PATH, JSON.stringify(data, null, 2));

@@ -18,18 +18,20 @@ L_Shop
 │  │  │  ├─ react.svg
 │  │  │  └─ vite.svg
 │  │  ├─ custom.d.ts
-│  │  ├─ detectLanguage.ts
-│  │  ├─ i18n.ts
 │  │  ├─ index.css
-│  │  ├─ langCookie.ts
-│  │  ├─ LocalePopup.tsx
 │  │  ├─ locales
-│  │  │  ├─ by.json
-│  │  │  ├─ en.json
-│  │  │  └─ ru.json
+│  │  │  ├─ i18n.ts
+│  │  │  ├─ langs
+│  │  │  │  ├─ by.json
+│  │  │  │  ├─ en.json
+│  │  │  │  └─ ru.json
+│  │  │  └─ LocalePopup.tsx
 │  │  ├─ main.tsx
 │  │  └─ pages
+│  │     ├─ AdminForm.tsx
+│  │     ├─ AdminPage.tsx
 │  │     ├─ css
+│  │     │  ├─ admin.css
 │  │     │  ├─ footer.css
 │  │     │  ├─ header.css
 │  │     │  ├─ locale-popup.css
@@ -57,6 +59,8 @@ L_Shop
 │  │     ├─ LoginPage.tsx
 │  │     ├─ ProfileForm.tsx
 │  │     ├─ ProfilePage.tsx
+│  │     ├─ ProfileUserForm.tsx
+│  │     ├─ ProfileUserPage.tsx
 │  │     ├─ RegisterForm.tsx
 │  │     ├─ RegisterPage.tsx
 │  │     ├─ ShopForm.tsx
@@ -65,32 +69,37 @@ L_Shop
 │  ├─ tsconfig.json
 │  ├─ tsconfig.node.json
 │  └─ vite.config.ts
+├─ package-lock copy.json
 ├─ package-lock.json
 ├─ package.json
+├─ README.md
 └─ server
    ├─ src
    │  ├─ controllers
    │  │  ├─ basketController.ts
    │  │  ├─ productController.ts
+   │  │  ├─ reviewController.ts
    │  │  └─ userController.ts
    │  ├─ db
    │  │  ├─ baskets.json
    │  │  ├─ products.json
+   │  │  ├─ review.json
    │  │  └─ users.json
    │  ├─ routes
    │  │  ├─ basketRoutes.ts
    │  │  ├─ productRoutes.ts
+   │  │  ├─ reviewRoutes.ts
    │  │  └─ userRoutes.ts
    │  ├─ server.ts
    │  ├─ services
    │  │  ├─ basketService.ts
-   │  │  ├─ db
-   │  │  │  └─ baskets.json
    │  │  ├─ productService.ts
+   │  │  ├─ reviewService.ts
    │  │  └─ userService.ts
    │  └─ types
    │     ├─ Basket.ts
    │     ├─ Product.ts
+   │     ├─ Review.ts
    │     └─ User.ts
    └─ tsconfig.json
 
