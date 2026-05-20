@@ -1,9 +1,57 @@
 import { Request, Response } from 'express';
-import { findUserByLogin, createUser, validateUser,readDB, updateUserByRole } from '../services/userService';
+import { findUserByLogin, createUser, validateUser, readDB, updateUserByRole } from '../services/userService';
 import { User, RegisterRequest, LoginRequest } from '../types/User';
 import jwt from "jsonwebtoken";
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: Управление пользователями (регистрация, авторизация, профиль)
+ */
 
+/**
+ * @swagger
+ * /users/register:
+ *   post:
+ *     summary: Регистрация нового пользователя
+ *     tags: [Users]
+ *     description: Создаёт нового пользователя и устанавливает сессионную cookie
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RegisterRequest'
+ *     responses:
+ *       201:
+ *         description: Регистрация прошла успешно
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Регистрация прошла успешно"
+ *       400:
+ *         description: Ошибка валидации данных
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   enum:
+ *                     - "Все поля обязательны для заполнения"
+ *                     - "Пароли не совпадают"
+ *                     - "Пароль должен содержать минимум 6 символов"
+ *                     - "Пользователь с таким логином уже существует"
+ *                     - "Неверный формат телефона. Используйте +375 (XX) XXX XXXX"
+ *       500:
+ *         description: Ошибка сервера
+ */
 export const register = async (req: Request, res: Response): Promise<void> => {
     try {
         const { login, password, repeatPassword, phone }: RegisterRequest = req.body;
@@ -60,6 +108,37 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+/**
+ * @swagger
+ * /users/login:
+ *   post:
+ *     summary: Вход в систему
+ *     tags: [Users]
+ *     description: Авторизует пользователя и устанавливает сессионную cookie
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LoginRequest'
+ *     responses:
+ *       200:
+ *         description: Вход выполнен успешно
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Вход выполнен успешно"
+ *       400:
+ *         description: Не указаны логин или пароль
+ *       401:
+ *         description: Неверный логин или пароль
+ *       500:
+ *         description: Ошибка сервера
+ */
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
         const { login, password }: LoginRequest = req.body;
@@ -100,6 +179,33 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+/**
+ * @swagger
+ * /users/me:
+ *   get:
+ *     summary: Получение данных текущего пользователя
+ *     tags: [Users]
+ *     description: Возвращает данные пользователя по сессионной cookie
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Данные пользователя получены успешно
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Не авторизован или токен истёк
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   enum: ["Not authenticated", "Token expired"]
+ */
 export const getMe = async (req: Request, res: Response): Promise<void> => {
     const token = req.cookies.session;
 
@@ -122,6 +228,25 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
+/**
+ * @swagger
+ * /users/logout:
+ *   post:
+ *     summary: Выход из системы
+ *     tags: [Users]
+ *     description: Очищает сессионную cookie и завершает сессию пользователя
+ *     responses:
+ *       200:
+ *         description: Выход выполнен успешно
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Logged out"
+ */
 export const logout = async (req: Request, res: Response): Promise<void> => {
   res.clearCookie("session", {
     httpOnly: true,
@@ -133,6 +258,27 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: "Logged out" });
 };
 
+/**
+ * @swagger
+ * /users/all:
+ *   post:
+ *     summary: Получение списка всех пользователей
+ *     tags: [Users]
+ *     description: Возвращает массив всех пользователей (требуются права администратора)
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Список пользователей получен успешно
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       500:
+ *         description: Ошибка сервера
+ */
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const db = await readDB();
@@ -143,7 +289,57 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const setRole = async (req :Request,res:Response): Promise<void> =>{
+/**
+ * @swagger
+ * /users/{id}/role:
+ *   put:
+ *     summary: Изменение роли пользователя
+ *     tags: [Users]
+ *     description: Обновляет роль пользователя (требуются права администратора)
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID пользователя
+ *         schema:
+ *           type: number
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - role
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [user, admin, manager]
+ *                 description: Новая роль пользователя
+ *                 example: "admin"
+ *     responses:
+ *       200:
+ *         description: Роль успешно обновлена
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Роль обновлена"
+ *                 user:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Не передана роль
+ *       404:
+ *         description: Пользователь не найден
+ *       500:
+ *         description: Ошибка сервера
+ */
+export const setRole = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = Number(req.params.id);
         const {role} = req.body;

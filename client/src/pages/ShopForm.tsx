@@ -1,3 +1,34 @@
+/**
+ * @fileoverview Основной компонент магазина с фильтрацией, корзиной, лайками и отзывами
+ * @module ShopForm
+ */
+
+/**
+ * Интерфейс товара
+ * @typedef {Object} Product
+ * @property {number} id - ID товара
+ * @property {string} name - Название
+ * @property {string} image - URL изображения
+ * @property {number} price - Цена
+ * @property {number} count - Количество на складе
+ * @property {string} [category] - Категория
+ * @property {string[]} [tags] - Теги для рекомендаций
+ */
+
+/**
+ * Интерфейс пользователя
+ * @typedef {Object} User
+ * @property {number} id - ID пользователя
+ * @property {string} login - Логин
+ */
+
+/**
+ * Компонент магазина с товарами, фильтрацией и корзиной
+ * @component
+ * @returns {JSX.Element} React компонент
+ */
+
+
 import { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";

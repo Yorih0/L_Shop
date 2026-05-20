@@ -1,17 +1,68 @@
+// server/src/routes/productRoutes.ts (обновлённый)
 import { Router } from "express";
-import { getProducts,getProductsId,getRecommendations,createProduct,editProduct,deleteProduct } from "../controllers/productController";
+import { 
+    getProducts,
+    getProductsId,
+    getRecommendations,
+    createProduct,
+    editProduct,
+    deleteProduct 
+} from "../controllers/productController";
 
-const router  = Router()
+const router = Router();
 
-router.get("/",getProducts)
-router.get("/id",getProductsId)
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Получение списка товаров
+ *     tags: [Products]
+ */
+router.get("/", getProducts);
 
-router.post("/recommendations", getRecommendations)
-router.post("/",createProduct)
+/**
+ * @swagger
+ * /products/id:
+ *   get:
+ *     summary: Получение товаров по ID
+ *     tags: [Products]
+ */
+router.get("/id", getProductsId);
 
+/**
+ * @swagger
+ * /products/recommendations:
+ *   post:
+ *     summary: Получение рекомендаций
+ *     tags: [Products]
+ */
+router.post("/recommendations", getRecommendations);
 
-router.patch("/:id",editProduct)
+/**
+ * @swagger
+ * /products:
+ *   post:
+ *     summary: Создание нового товара
+ *     tags: [Products]
+ */
+router.post("/", createProduct);
 
-router.delete("/:id",deleteProduct)
+/**
+ * @swagger
+ * /products/{id}:
+ *   patch:
+ *     summary: Редактирование товара
+ *     tags: [Products]
+ */
+router.patch("/:id", editProduct);
 
-export default router
+/**
+ * @swagger
+ * /products/{id}:
+ *   delete:
+ *     summary: Удаление товара
+ *     tags: [Products]
+ */
+router.delete("/:id", deleteProduct);
+
+export default router;

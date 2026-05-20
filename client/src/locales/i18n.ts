@@ -1,3 +1,32 @@
+/**
+ * @fileoverview Настройки интернационализации для приложения
+ * @module i18n
+ */
+
+/**
+ * Получает сохранённый язык из cookies
+ * @function getSessionLang
+ * @returns {string|null} Код языка (ru/en/by) или null
+ */
+
+/**
+ * Сохраняет выбранный язык в cookies
+ * @function setSessionLang
+ * @param {string} lang - Код языка (ru/en/by)
+ */
+
+/**
+ * Определяет язык по браузеру
+ * @function getLangFromBrowser
+ * @returns {string} Код языка (ru/en/by), по умолчанию 'ru'
+ */
+
+/**
+ * Детектирует язык с учётом сохранённого и браузерного
+ * @function detectLanguageSync
+ * @returns {string} Код языка для использования
+ */
+
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 

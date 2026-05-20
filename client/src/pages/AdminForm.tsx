@@ -1,3 +1,38 @@
+/**
+ * @fileoverview Административная панель для управления товарами и пользователями
+ * @module AdminForm
+ * @requires react
+ * @requires axios
+ * @requires react-i18next
+ */
+
+/**
+ * Интерфейс товара для админ-панели
+ * @typedef {Object} Product
+ * @property {number} id - ID товара
+ * @property {string} name - Название
+ * @property {number} price - Цена
+ * @property {number} count - Количество
+ * @property {string} category - Категория
+ * @property {string} image - URL изображения
+ * @property {string[]} [tags] - Теги
+ */
+
+/**
+ * Интерфейс пользователя для админ-панели
+ * @typedef {Object} User
+ * @property {number} id - ID пользователя
+ * @property {string} login - Логин
+ * @property {string} [phone] - Телефон
+ * @property {string} role - Роль (user/admin/manager)
+ */
+
+/**
+ * Компонент административной панели
+ * @component
+ * @returns {JSX.Element} React компонент админ-панели
+ */
+
 import { useEffect, useState } from "react";
 import "./css/profile.css";
 import "./css/admin.css";
@@ -56,7 +91,7 @@ export default function AdminForm() {
         setProducts(prodRes.data);
 
         if (userRes.data.role === "admin") {
-          const usersRes = await axios.post("http://localhost:5000/api/users/all", {
+          const usersRes = await axios.put("http://localhost:5000/api/users/all", {
             withCredentials: true
           });
           setUsers(usersRes.data);

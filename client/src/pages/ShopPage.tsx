@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Страница магазина с главным экраном и формой магазина
+ * @module ShopPage
+ * @requires react-i18next
+ */
+
 import Header from "./Header";
 import Footer from "./Footer";
 import ShopForm from "./ShopForm";
@@ -14,6 +20,14 @@ import macbookAir from "./img/main/Macbook_14_Air.png";
 import iphone from "./img/main/Iphone_17_Pro_Max.png";
 import airpods from "./img/main/AirPods_3_Pro.png";
 
+/**
+ * Компонент страницы магазина
+ * @component
+ * @returns {JSX.Element} React компонент страницы магазина
+ * 
+ * @example
+ * <ShopPage />
+ */
 export default function ShopPage() {
   const { t } = useTranslation();
 
@@ -24,29 +38,19 @@ export default function ShopPage() {
         <div className="News">
           <div className="hello_screen">
             <h1 className="title">
-              {t("shop.Harmony")}<span className="gradient-text"> {t("shop.perfection")}</span>
+              {t("shop.Harmony")}
+              <span className="gradient-text"> {t("shop.perfection")}</span>
             </h1>
-            
             <img src={vector1} className="vector1" alt="" />
             <img src={vector2} className="vector2" alt="" />
             <img src={vector3} className="vector3" alt="" />
             <img src={blend1} className="vector4" alt="" />
             <img src={blend2} className="vector5" alt="" />
-            
             <p className="subtitle">{t("shop.NewItems")}</p>
             <div className="news">
-              <div className="new">
-                <img src={macbookPro} alt="" />
-              </div>
-              <div className="new">
-                <img src={macbookAir} alt="" />
-              </div>
-              <div className="new">
-                <img src={iphone} alt="" />
-              </div>
-              <div className="new">
-                <img src={airpods} alt="" />
-              </div>
+              {[macbookPro, macbookAir, iphone, airpods].map((img, idx) => (
+                <div className="new" key={idx}><img src={img} alt="" /></div>
+              ))}
             </div>
           </div>
         </div>

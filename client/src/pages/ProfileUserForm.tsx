@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Компонент профиля пользователя с корзиной и историей покупок
+ * @module ProfileForm
+ */
+
+/**
+ * Интерфейс корзины
+ * @typedef {Object} BasketItems
+ * @property {number} id - ID товара
+ * @property {string} name - Название товара
+ */
+
+/**
+ * Компонент профиля пользователя
+ * @component
+ * @returns {JSX.Element} React компонент профиля
+ */
+
 import { useEffect, useState } from "react";
 import "./css/profile.css";
 import axios from "axios";
@@ -102,9 +120,8 @@ export default function ProfileForm() {
     setBasketItems(updated);
 
     if (user?.id) {
-      await axios.post(
-        `http://localhost:5000/api/basket/${user.id}/update`,
-        updated,
+      await axios.put(
+        `http://localhost:5000/api/basket/${user.id}/update`,{ basket: updated },
         { withCredentials: true }
       );
     } else {
