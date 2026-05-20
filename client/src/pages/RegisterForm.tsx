@@ -2,11 +2,15 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import type { ChangeEvent, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./css/register.css";
 
 axios.defaults.withCredentials = true;
 
 export default function RegisterForm() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     login: "",
     password: "",
@@ -14,10 +18,8 @@ export default function RegisterForm() {
     phone: "",
   });
 
-  const navigate = useNavigate();
-
   const [showPassword, setShowPassword] = useState(false);
-  const [showPassword_rep, setShowPassword_rep] = useState(false);
+  const [showPasswordRep, setShowPasswordRep] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setForm({
@@ -30,46 +32,34 @@ export default function RegisterForm() {
     e.preventDefault();
 
     if (form.password !== form.repeatPassword) {
-      alert("Пароли не совпадают");
+      alert(t("register.passwordMismatch"));
       return;
     }
 
     try {
-      await axios.post(
-        "http://localhost:5000/api/users/register",
-        form,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.post("http://localhost:5000/api/users/register", form, {
+        withCredentials: true,
+      });
 
-      const me = await axios.get(
-        "http://localhost:5000/api/users/me",
-        {
-          withCredentials: true,
-        }
-      );
-
-      alert("Вы зарегистрированы");
-
+      alert(t("register.success"));
       navigate("/shop");
     } catch (err) {
       const error = err as AxiosError;
       console.error("Ошибка:", error.response?.data);
-      alert("Ошибка: " + error.message);
+      alert(`${t("register.errorPrefix")} ${error.message}`);
     }
   };
 
   return (
     <div className="card">
-      <h1 className="card-title">Теперь с нами!</h1>
+      <h1 className="card-title">{t("register.title")}</h1>
 
       <form className="form" onSubmit={handleSubmit}>
         <div className="input-box">
           <input
             type="text"
             name="login"
-            placeholder="Ваш логин"
+            placeholder={t("register.loginPlaceholder")}
             value={form.login}
             onChange={handleChange}
             required
@@ -80,15 +70,13 @@ export default function RegisterForm() {
           <input
             type={showPassword ? "text" : "password"}
             name="password"
-            placeholder="Ваш пароль"
+            placeholder={t("register.passwordPlaceholder")}
             value={form.password}
             onChange={handleChange}
             required
           />
           <i
-            className={`fas ${
-              !showPassword ? "fa-lock" : "fa-unlock-alt"
-            }`}
+            className={`fas ${!showPassword ? "fa-lock" : "fa-unlock-alt"}`}
             onClick={() => setShowPassword(!showPassword)}
             style={{ cursor: "pointer" }}
           ></i>
@@ -96,18 +84,16 @@ export default function RegisterForm() {
 
         <div className="input-box-lock">
           <input
-            type={showPassword_rep ? "text" : "password"}
+            type={showPasswordRep ? "text" : "password"}
             name="repeatPassword"
-            placeholder="Повтор пароля"
+            placeholder={t("register.repeatPasswordPlaceholder")}
             value={form.repeatPassword}
             onChange={handleChange}
             required
           />
           <i
-            className={`fas ${
-              !showPassword_rep ? "fa-lock" : "fa-unlock-alt"
-            }`}
-            onClick={() => setShowPassword_rep(!showPassword_rep)}
+            className={`fas ${!showPasswordRep ? "fa-lock" : "fa-unlock-alt"}`}
+            onClick={() => setShowPasswordRep(!showPasswordRep)}
             style={{ cursor: "pointer" }}
           ></i>
         </div>
@@ -116,7 +102,7 @@ export default function RegisterForm() {
           <input
             type="text"
             name="phone"
-            placeholder="+375 00 000 0000"
+            placeholder={t("register.phonePlaceholder")}
             value={form.phone}
             onChange={handleChange}
             required
@@ -124,12 +110,12 @@ export default function RegisterForm() {
         </div>
 
         <button type="submit" className="btn">
-          Зарегистрироваться
+          {t("register.button")}
         </button>
 
         <div className="account">
-          <span>Есть аккаунт?</span>
-          <Link to="/login">Войти</Link>
+          <span>{t("register.haveAccount")}</span>
+          <Link to="/login">{t("register.loginLink")}</Link>
         </div>
       </form>
     </div>

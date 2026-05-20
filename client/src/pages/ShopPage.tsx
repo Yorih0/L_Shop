@@ -2,8 +2,8 @@ import Header from "./Header";
 import Footer from "./Footer";
 import ShopForm from "./ShopForm";
 import "./css/shop.css";
+import { useTranslation } from "react-i18next";
 
-// Просто импортируем каждое изображение
 import vector1 from "./img/main/Vector.png";
 import vector2 from "./img/main/Vector (1).png";
 import vector3 from "./img/main/Vector (2).png";
@@ -15,6 +15,8 @@ import iphone from "./img/main/Iphone_17_Pro_Max.png";
 import airpods from "./img/main/AirPods_3_Pro.png";
 
 export default function ShopPage() {
+  const { t } = useTranslation();
+
   return (
     <>
       <Header />
@@ -22,7 +24,7 @@ export default function ShopPage() {
         <div className="News">
           <div className="hello_screen">
             <h1 className="title">
-              Гармония <span className="gradient-text">совершенства</span>
+              {t("shop.Harmony")}<span className="gradient-text"> {t("shop.perfection")}</span>
             </h1>
             
             <img src={vector1} className="vector1" alt="" />
@@ -31,7 +33,7 @@ export default function ShopPage() {
             <img src={blend1} className="vector4" alt="" />
             <img src={blend2} className="vector5" alt="" />
             
-            <p className="subtitle">Новинки</p>
+            <p className="subtitle">{t("shop.NewItems")}</p>
             <div className="news">
               <div className="new">
                 <img src={macbookPro} alt="" />

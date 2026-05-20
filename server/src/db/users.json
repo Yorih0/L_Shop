@@ -13,6 +13,37 @@
       "password": "123321",
       "phone": "+375 33 613 5003",
       "role": "user"
+<<<<<<< HEAD
+=======
+    },
+    {
+      "id": 3,
+      "login": "user_1",
+      "password": "123321",
+      "phone": "+375 33 613 5003",
+      "role": "manager"
+    },
+    {
+      "id": 4,
+      "login": "arsen",
+      "password": "52421488",
+      "phone": "+375 33 613 5052",
+      "role": "user"
+    },
+    {
+      "id": 5,
+      "login": "arse",
+      "password": "42521488",
+      "phone": "+375 33 613 5052",
+      "role": "user"
+    },
+    {
+      "id": 6,
+      "login": "ivan2",
+      "password": "123456",
+      "phone": "+375 33 613 5523",
+      "role": "manager"
+>>>>>>> d1acdafe674c8e41e7668b5e7bf4a67659ce1576
     }
   ]
 }

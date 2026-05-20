@@ -16,5 +16,31 @@
         "name": "X"
       }
     ]
+  },
+  {
+    "user_id": 6,
+    "basket": [
+      {
+        "id": 5,
+        "name": "MacBook Pro 16"
+      },
+      {
+        "id": 6,
+        "name": "MacBook Air 15"
+      },
+      {
+        "id": 7,
+        "name": "Apple Watch Ultra 2"
+      }
+    ]
+  },
+  {
+    "user_id": 3,
+    "basket": [
+      {
+        "id": 2,
+        "name": "iPhone 15"
+      }
+    ]
   }
 ]

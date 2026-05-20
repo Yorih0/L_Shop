@@ -1,9 +1,17 @@
 import { Router } from "express";
-import { getProducts,getProductsId } from "../controllers/productController";
+import { getProducts,getProductsId,getRecommendations,createProduct,editProduct,deleteProduct } from "../controllers/productController";
 
 const router  = Router()
 
 router.get("/",getProducts)
 router.get("/id",getProductsId)
 
-export default router 
+router.post("/recommendations", getRecommendations)
+router.post("/",createProduct)
+
+
+router.patch("/:id",editProduct)
+
+router.delete("/:id",deleteProduct)
+
+export default router

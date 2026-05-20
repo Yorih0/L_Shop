@@ -46,9 +46,37 @@ body {
     color: black;
 }
 
-.icons {
+.icons-s {
     display: flex;
     gap: 20px;
     color: #454545;
     cursor: pointer;
+    align-items: center;
+}
+
+
+.language-switcher {
+  display: flex;
+  gap: 8px;
+  margin-left: 20px;
+}
+
+.language-switcher button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: 0.2s;
+  font-family: 'Rubik', sans-serif;
+}
+
+.language-switcher button:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.language-switcher button.active {
+  background: #303030;
+  color: white;
 }

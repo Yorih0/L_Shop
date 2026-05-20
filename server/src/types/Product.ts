@@ -5,4 +5,5 @@ export interface Product {
     name:string
     category: 'iphone' | 'ipad' | 'mac' | 'watch' | 'airpods' | 'accessories' | 'TV'
     image:string
+    tags?:string[]
 }
